@@ -1,0 +1,25 @@
+button {
+    border: none;
+    background-color: Blue;
+    color: Red;
+    padding: 14px 28px;
+    font-size: 16px;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+    cursor: pointer;
+    display: inline-block;
+  }
+.ok:hover {background: SeaGreen}
+.ok {color: yellow;}
+
+label {
+  background-color: Red;
+  color: White;
+}
+ 
+input[type=text] {
+  background-color: black;
+  color: Green;
+  border: 2px red;
+  border-radius: 4px;
+}
