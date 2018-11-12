@@ -7,9 +7,20 @@
 <body>
 <div>
   <form method="POST" action="/">    
-      <label>Name</label><input name="name" type="text" value="" />
+      <label>Name</label><input name="name" type="text" value="" required/>
       <label>Address</label><input name="address" type="text" value="" />
-      <button class="btn ok" type="submit" name="OK" value="junk">OK</button>
+      <br>
+      <button class="btn ok" type="submit" name="next" value="trans commit">OK</button>
+		<button name="next" value="main" type="submit" class=btn cancel>Cancel</button>
+  </form>
+</div>
+<div>
+  <form method="POST" action="/">    
+      <label>label</label><input name="lable" type="text" value="" />
+      <label>Junk</label><input name="junk" type="text" value="" />
+      <br>
+      <button class="btn ok" type="submit" name="next" value="trans">OK</button>
+		<button name="next" value="main" type="submit" class=btn cancel>Cancel</button>
   </form>
 </div>
 </body>

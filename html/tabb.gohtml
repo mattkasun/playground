@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Spending Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+
+<div class="w3-bar w3-black">
+  <button class="w3-bar-item w3-button" onclick="openCity('Home')">Home</button>
+  <button class="w3-bar-item w3-button" onclick="openCity('Expense')">Expense</button>
+  <button class="w3-bar-item w3-button" onclick="openCity('Income')">Income</button>
+  <button class="w3-bar-item w3-button" onclick="openCity('Transaction')">Transaction</button>
+  <button class="w3-bar-item w3-button" onclick="openCity('Category')">Category</button>
+</div>
+
+<div id="Home" class="w3-container city">
+	<ul> 
+					<li>Income ${{.Income}}</li>
+					<li>Expense ${{.ExpenseTotal}}</li>
+					<ul>
+									{{range .Expenses}}
+									<li>{{.Cat}} ${{.Amount}}</li>
+									{{end}}
+					</ul>
+	</ul>
+</div>
+
+<div id="Expense" class="w3-container city" style="display:none">
+  <h2>Expense</h2>
+  <p>Enter Expense Details</p>
+	<form action="/" method=post>
+  Date <input name="date" type="date" value="" required /><br>
+	Category
+	<select name="Category" size=1 >
+		<option value="coffee">Coffee</option>
+		<option value="lunch">Lunch</option>
+		<option value="cleaning">Cleaning Lady</option>
+		<option value="misc">Miscellaneous</option>
+	</select><br>
+  Amount
+	<input name="amount" type="number" value="" required/><br><br>
+	<input type="submit" value=OK>
+  <button onclick="openCity('Home')">Cancel</button>
+	<input type="hidden" name="form" value="expense">
+	</form>
+</div>
+
+<div id="Income" class="w3-container city" style="display:none">
+  <h2>Income</h2>
+  <p>Paris is the capital of France.</p> 
+<form action="/" method=post id="form2">
+<label>Date</label>
+<input name="date" type="date" value="" required/>
+<br>
+	<label>Category</label>
+	<select name="Category" size=1>
+		<option value="salary">Salary</option>
+		<option value="misc">Miscellaneous</option>
+	</select>
+	<br>
+  <label>Amount</label>
+	<input name="amount" type="number" value="" required/>
+  <br>
+  <br>
+	<input type="submit" value=OK>
+  <button onclick="openCity('Home')">Cancel</button>
+	<input type="hidden" name="form" value="income">
+</form>
+
+</div>
+
+<div id="Transaction" class="w3-container city" style="display:none">
+  <h2>Transaction</h2>
+  <p>Tokyo is the capital of Japan.</p>
+</div>
+
+<div id="Category" class="w3-container city" style="display:none">
+  <h2>Category</h2>
+  <p>Tokyo is the capital of Japan.</p>
+</div>
+
+
+<script>
+function openCity(cityName) {
+    var i;
+    var x = document.getElementsByClassName("city");
+    for (i = 0; i < x.length; i++) {
+       x[i].style.display = "none";  
+    }
+    document.getElementById(cityName).style.display = "block";  
+}
+</script>
+
+</body>
+</html>
+
