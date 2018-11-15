@@ -3,9 +3,6 @@ package main
 import (
   "fmt"
   "time"
-  "os"
-  "log"
-  "encoding/json"
 )
 
 type Transaction struct {
@@ -64,27 +61,19 @@ func main () {
   }
 
   transactions = append (transactions, Transaction{4, time.Now(), 1, 3, true})
-  //balance := 0
-  //expense := 0
-  //income  := 0
-  
-  f, err := os.OpenFile("data.file", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
-  defer f.Close()
-  if err != nil {
-    log.Fatal ("error creating file" , err)
-  }
-
+  balance := 0
+  expense := 0
+  income  := 0
   for i := range transactions {
-    b, err := json.Marshal(transactions[i])
-    if err != nil {
-      log.Fatal("encoding error: ", err)
+    if transactions[i].Expense {
+      balance = balance - transactions[i].Amount
+      expense = expense + transactions[i].Amount
+    } else {
+        balance = balance + transactions[i].Amount
+        income = income + transactions[i].Amount
     }
-    n, err := f.Write(b)
-    if  err != nil {
-      log.Fatal("write err:", err)
-    }
-    fmt.Println("wrote ", n, " bytes")
-  }
+  fmt.Println ("New balances: ", balance, income, expense)
+}
   fmt.Println (transactions[1].Date)
   year,month,day := transactions[1].Date.Date()
   fmt.Println (year,month,day)
