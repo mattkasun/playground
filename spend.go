@@ -49,11 +49,9 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "ParseForm() err: %v", err)
 			return
 		}
-		fmt.Println("Post from website! r.PostFrom = %v\n", r.PostForm)
-		fmt.Println("Request", r)
 		switch r.FormValue("form") {
 		case "expense":
-			commitTrans(r)
+			data = commitTrans(r)
 			tmpl.Execute(w, data)
 		case "cancel":
 			http.ServeFile(w, r, "html/main.html")
@@ -73,7 +71,6 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 			http.ServeFile(w, r, "html/main.html")
 		}
 
-		fmt.Fprintf(w, "Post from website! r.PostFrom = %v\n", r.PostForm)
 	default:
 		fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
 	}
@@ -89,24 +86,18 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func commitTrans(r *http.Request) {
+func commitTrans(r *http.Request) PageData {
 
-	fmt.Println("Post from website! r.PostFrom = \n", r.PostForm)
-	fmt.Println("commiting transaction")
 	//r.ParseForm()
-	fmt.Println(r, "\n----\n", r.FormValue("date"))
 	amount, _ := strconv.Atoi(r.FormValue("amount"))
 	date, err := time.Parse("2006-01-02", r.FormValue("date"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	cat := r.FormValue("Category")
-	fmt.Println("data: ", amount, date, cat)
 	transactions = append(transactions, Transaction{Date: date, Cat: cat, Amount: amount, Expense: true})
-	fmt.Println("transactions:", transactions)
 	data = balance(transactions)
-	fmt.Println("pagedata:", data)
-
+	return data
 }
 
 func previous() {

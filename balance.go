@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 func balance(t []Transaction) PageData {
 	var data PageData
 	var categories []Expense
@@ -14,19 +10,16 @@ func balance(t []Transaction) PageData {
 		if t[i].Expense {
 			if len(categories) == 0 {
 				categories = append(categories, Expense{Cat: t[i].Cat, Amount: t[i].Amount})
-				fmt.Println("new", i, categories)
 			} else {
 				found := false
 				for j := range categories {
 					if categories[j].Cat == t[i].Cat {
 						categories[j].Amount = categories[j].Amount + t[i].Amount
 						found = true
-						fmt.Println(found, i, j, categories)
 					}
 				}
 				if found == false {
 					categories = append(categories, Expense{Cat: t[i].Cat, Amount: t[i].Amount})
-					fmt.Println(found, i, categories)
 				}
 			}
 			balance = balance - t[i].Amount
