@@ -6,33 +6,33 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
+	"time"
 )
 
+// Transaction -- contains information on single transaction
+type Transaction struct {
+	Date    time.Time
+	Cat     string
+	Amount  int
+	Expense bool
+}
+
+//Expense -- type to expense data
 type Expense struct {
 	Cat    string
 	Amount int
 }
+
+//PageData - contains data for html template
 type PageData struct {
 	Income       int
 	ExpenseTotal int
+	Balance      int
 	Expenses     []Expense
 }
 
-var data = PageData{
-	Income:       200,
-	ExpenseTotal: 15,
-	Expenses: []Expense{
-		Expense{
-			Cat:    "lunch",
-			Amount: 12,
-		},
-		Expense{
-			Cat:    "coffee",
-			Amount: 3,
-		},
-	},
-}
+var data PageData
+var transactions []Transaction
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("html/tabb.gohtml"))
@@ -53,7 +53,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Request", r)
 		switch r.FormValue("form") {
 		case "expense":
-			CommitTrans(r)
+			commitTrans(r)
 			tmpl.Execute(w, data)
 		case "cancel":
 			http.ServeFile(w, r, "html/main.html")
@@ -80,28 +80,33 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	transactions = read()
+	data = balance(transactions)
+	fmt.Println(transactions, data)
 	fs := http.FileServer(http.Dir("stylesheet"))
 	http.Handle("/stylesheet/", http.StripPrefix("/stylesheet/", fs))
 	http.HandleFunc("/", helloHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func CommitTrans(r *http.Request) {
+func commitTrans(r *http.Request) {
 
 	fmt.Println("Post from website! r.PostFrom = \n", r.PostForm)
-	fmt.Println("current data", data.Income, data.ExpenseTotal, data.Expenses[0].Amount, data.Expenses[1].Amount)
 	fmt.Println("commiting transaction")
-	r.ParseForm()
-	amount, _ := strconv.Atoi(strings.Join(r.Form["amount"], " "))
-	fmt.Println("amount: ", amount)
-
-	if strings.Join(r.Form["Category"], " ") == "lunch" {
-		data.Expenses[0].Amount += amount
-	} else {
-		data.Expenses[1].Amount += amount
+	//r.ParseForm()
+	fmt.Println(r, "\n----\n", r.FormValue("date"))
+	amount, _ := strconv.Atoi(r.FormValue("amount"))
+	date, err := time.Parse("2006-01-02", r.FormValue("date"))
+	if err != nil {
+		log.Fatal(err)
 	}
-	data.ExpenseTotal += amount
-	fmt.Println ("ExpenseTotal: ", data.ExpenseTotal)
+	cat := r.FormValue("Category")
+	fmt.Println("data: ", amount, date, cat)
+	transactions = append(transactions, Transaction{Date: date, Cat: cat, Amount: amount, Expense: true})
+	fmt.Println("transactions:", transactions)
+	data = balance(transactions)
+	fmt.Println("pagedata:", data)
+
 }
 
 func previous() {
