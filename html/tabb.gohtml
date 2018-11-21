@@ -52,28 +52,27 @@
 <div id="Income" class="w3-container city" style="display:none">
   <h2>Income</h2>
   <p>Enter Income Details</p> 
-<form action="/" method=post id="form2">
-<label>Date</label>
-<input name="date" type="date" value="" required/>
-<br>
-	<label>Category</label>
-	<select name="Category" size=1>
-		{{range .Categories}}
-			{{if not .ExpenseCat}}
-				<option value="{{.Name}}">{{.Name}}</option>
+	<form action="/" method=post id="form2">
+		<label>Date</label>
+		<input name="date" type="date" value="" required/>
+		<br>
+		<label>Category</label>
+		<select name="Category" size=1>
+			{{range .Categories}}
+				{{if not .ExpenseCat}}
+					<option value="{{.Name}}">{{.Name}}</option>
+				{{end}}
 			{{end}}
-		{{end}}
-	</select>
-	<br>
-  <label>Amount</label>
-	<input name="amount" type="number" value="" requiraed/>
-  <br>
-  <br>
-	<input type="submit" value=OK>
-  <button onclick="openCity('Home')">Cancel</button>
-	<input type="hidden" name="form" value="income">
-</form>
-
+		</select>
+		<br>
+  	<label>Amount</label>
+		<input name="amount" type="number" value="" requiraed/>
+  	<br>
+  	<br>
+		<input type="submit" value=OK>
+  	<button onclick="openCity('Home')">Cancel</button>
+		<input type="hidden" name="form" value="income">
+	</form>
 </div>
 
 <div id="Transaction" class="w3-container city" style="display:none">
@@ -104,6 +103,32 @@
 				{{end}}
 			{{end}}
 		</ul>
+	</ul>	
+	<button onclick="openCity('AddExpense')">New Expense</button>
+	<button onclick="openCity('AddIncome')">New Income</button>
+	</form>
+</div>
+
+<div id="AddExpense" class="w3-container city" style="display:none">
+	<h2>Add New Expense Category</h2>
+	<form action="/" method=post>
+		Name<input name="category" type="text" value="" required/>
+		<br>
+		<input type="submit" value=OK>
+		<button onclick="openCity('Category')">Cancel</button>
+		<input type="hidden" name="form" value="addExpense">
+	</form>
+</div>
+
+<div id="AddIncome" class="w3-container city" style="display:none">
+	<h2>Add New Income Category</h2>
+	<form action="/" method=post>
+		Name<input name="category" type="text" value="" required/>
+		<br>
+		<input type="submit" value=OK>
+		<button onclick="openCity('Category')">Cancel</button>
+		<input type="hidden" name="form" value="addIncome">
+	</form>
 </div>
 
 

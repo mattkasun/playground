@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 )
@@ -23,7 +22,6 @@ func readTrans() []Transaction {
 		if err != nil {
 			log.Fatal("decoding transaction", err)
 		}
-		fmt.Printf("%v:%v:%v:%v:\n", transaction.Date, transaction.Cat, transaction.Amount, transaction.Expense)
 		transactions = append(transactions, transaction)
 	}
 	return transactions
@@ -44,7 +42,6 @@ func readCat() []Category {
 		if err != nil {
 			log.Fatal("decoding categories ", err)
 		}
-		fmt.Println(category)
 		categories = append(categories, category)
 	}
 	return categories

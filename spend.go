@@ -56,7 +56,6 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		categories = readCat()
 		data = balance(transactions, categories)
 		data.Transactions = transactions
-		fmt.Println(data)
 		tmpl.Execute(w, data)
 	case "POST":
 		if err := r.ParseForm(); err != nil {
@@ -65,17 +64,25 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		switch r.FormValue("form") {
 		case "expense":
-			transactions = commitTrans(r)
+			transactions = commitTrans(r, true)
 			data = balance(transactions, categories)
+			data.Transactions = transactions
 			tmpl.Execute(w, data)
-		case "cancel":
-			http.ServeFile(w, r, "html/main.html")
 		case "income":
-			http.ServeFile(w, r, "html/income.html")
-		case "spending":
-			http.ServeFile(w, r, "html/spend.html")
-		case "transactions":
-			http.ServeFile(w, r, "html/transactions.html")
+			transactions = commitTrans(r, false)
+			data = balance(transactions, categories)
+			data.Transactions = transactions
+			tmpl.Execute(w, data)
+		case "addIncome":
+			addCategory(r, false)
+			categories = readCat()
+			data.Categories = categories
+			tmpl.Execute(w, data)
+		case "addExpense":
+			addCategory(r, true)
+			categories = readCat()
+			data.Categories = categories
+			tmpl.Execute(w, data)
 		case "categories":
 			http.ServeFile(w, r, "html/category.html")
 		case "previous":
@@ -84,6 +91,9 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		case "next":
 			next()
 			http.ServeFile(w, r, "html/main.html")
+		default:
+			fmt.Println("not yet implemented")
+			tmpl.Execute(w, data)
 		}
 
 	default:
@@ -92,7 +102,6 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Println(transactions, data)
 
 	fs := http.FileServer(http.Dir("stylesheet"))
 	http.Handle("/stylesheet/", http.StripPrefix("/stylesheet/", fs))
@@ -100,7 +109,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func commitTrans(r *http.Request) []Transaction {
+func commitTrans(r *http.Request, expense bool) []Transaction {
 
 	//r.ParseForm()
 	amount, _ := strconv.Atoi(r.FormValue("amount"))
@@ -109,8 +118,8 @@ func commitTrans(r *http.Request) []Transaction {
 		log.Fatal(err)
 	}
 	cat := r.FormValue("Category")
-	transaction := Transaction{Date: date, Cat: cat, Amount: amount, Expense: true}
-	transactions = append(transactions, Transaction{Date: date, Cat: cat, Amount: amount, Expense: true})
+	transaction := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
+	transactions = append(transactions, transaction)
 	writeOne(transaction)
 	return transactions
 }
