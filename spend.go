@@ -9,6 +9,12 @@ import (
 	"time"
 )
 
+// Category -- expense and income types
+type Category struct {
+	ExpenseCat bool
+	Name       string
+}
+
 // Transaction -- contains information on single transaction
 type Transaction struct {
 	Date    time.Time
@@ -29,10 +35,13 @@ type PageData struct {
 	ExpenseTotal int
 	Balance      int
 	Expenses     []Expense
+	Categories   []Category
+	Transactions []Transaction
 }
 
 var data PageData
 var transactions []Transaction
+var categories []Category
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("html/tabb.gohtml"))
@@ -43,6 +52,11 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		//http.ServeFile(w, r, "html/tab.html")
+		transactions = readTrans()
+		categories = readCat()
+		data = balance(transactions, categories)
+		data.Transactions = transactions
+		fmt.Println(data)
 		tmpl.Execute(w, data)
 	case "POST":
 		if err := r.ParseForm(); err != nil {
@@ -51,7 +65,8 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		switch r.FormValue("form") {
 		case "expense":
-			data = commitTrans(r)
+			transactions = commitTrans(r)
+			data = balance(transactions, categories)
 			tmpl.Execute(w, data)
 		case "cancel":
 			http.ServeFile(w, r, "html/main.html")
@@ -77,16 +92,15 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	transactions = read()
-	data = balance(transactions)
 	fmt.Println(transactions, data)
+
 	fs := http.FileServer(http.Dir("stylesheet"))
 	http.Handle("/stylesheet/", http.StripPrefix("/stylesheet/", fs))
 	http.HandleFunc("/", helloHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func commitTrans(r *http.Request) PageData {
+func commitTrans(r *http.Request) []Transaction {
 
 	//r.ParseForm()
 	amount, _ := strconv.Atoi(r.FormValue("amount"))
@@ -95,9 +109,10 @@ func commitTrans(r *http.Request) PageData {
 		log.Fatal(err)
 	}
 	cat := r.FormValue("Category")
+	transaction := Transaction{Date: date, Cat: cat, Amount: amount, Expense: true}
 	transactions = append(transactions, Transaction{Date: date, Cat: cat, Amount: amount, Expense: true})
-	data = balance(transactions)
-	return data
+	writeOne(transaction)
+	return transactions
 }
 
 func previous() {
