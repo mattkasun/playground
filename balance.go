@@ -1,25 +1,26 @@
 package main
 
-func balance(t []Transaction) PageData {
+func balance(t []Transaction, c []Category) PageData {
 	var data PageData
-	var categories []Expense
+	var expenses []Expense
 	balance := 0
 	expense := 0
 	income := 0
+
 	for i := range t {
 		if t[i].Expense {
-			if len(categories) == 0 {
-				categories = append(categories, Expense{Cat: t[i].Cat, Amount: t[i].Amount})
+			if len(expenses) == 0 {
+				expenses = append(expenses, Expense{Cat: t[i].Cat, Amount: t[i].Amount})
 			} else {
 				found := false
-				for j := range categories {
-					if categories[j].Cat == t[i].Cat {
-						categories[j].Amount = categories[j].Amount + t[i].Amount
+				for j := range expenses {
+					if expenses[j].Cat == t[i].Cat {
+						expenses[j].Amount = expenses[j].Amount + t[i].Amount
 						found = true
 					}
 				}
 				if found == false {
-					categories = append(categories, Expense{Cat: t[i].Cat, Amount: t[i].Amount})
+					expenses = append(expenses, Expense{Cat: t[i].Cat, Amount: t[i].Amount})
 				}
 			}
 			balance = balance - t[i].Amount
@@ -32,7 +33,7 @@ func balance(t []Transaction) PageData {
 	data.Income = income
 	data.ExpenseTotal = expense
 	data.Balance = balance
-	data.Expenses = categories
-
+	data.Expenses = expenses
+	data.Categories = c
 	return data
 }
