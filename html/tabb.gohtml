@@ -9,23 +9,28 @@
 
 <div class="w3-bar w3-black">
   <button class="w3-bar-item w3-button" onclick="openCity('Home')">Home</button>
-  <button class="w3-bar-item w3-button" onclick="openCity('Expense')">Expense</button>
-  <button class="w3-bar-item w3-button" onclick="openCity('Income')">Income</button>
   <button class="w3-bar-item w3-button" onclick="openCity('Transaction')">Transaction</button>
   <button class="w3-bar-item w3-button" onclick="openCity('Category')">Category</button>
 </div>
 
 <div id="Home" class="w3-container city">
 	<ul> 
-					<li>Income ${{.Income}}</li>
-					<li>Expense ${{.ExpenseTotal}}</li>
-					<ul>
-									{{range .Expenses}}
-									<li>{{.Cat}} ${{.Amount}}</li>
-									{{end}}
-					</ul>
-					<li>Balance ${{.Balance}}</li>
+		<li>Income ${{.Income}}</li>
+		<li>Expense ${{.ExpenseTotal}}</li>
+		<ul>
+			{{range .Expenses}}
+				<li>{{.Cat}} ${{.Amount}}</li>
+			{{end}}
+		</ul>
+		<hr style="border-top: 1px dotted black"/>
+		
+		<li>CarryOver ${{.CarryOver}}
+		<li>Balance ${{.Balance}}</li>
 	</ul>
+	<div class="w3-bar w3-black">
+  	<button class="w3-bar-item w3-button" onclick="openCity('Expense')">Expense</button>
+  	<button class="w3-bar-item w3-button" onclick="openCity('Income')">Income</button>
+	</div>
 </div>
 
 <div id="Expense" class="w3-container city" style="display:none">

@@ -37,6 +37,7 @@ type PageData struct {
 	Expenses     []Expense
 	Categories   []Category
 	Transactions []Transaction
+	CarryOver    int
 }
 
 var data PageData
