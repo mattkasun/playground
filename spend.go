@@ -31,6 +31,7 @@ type Expense struct {
 
 //PageData - contains data for html template
 type PageData struct {
+	Today        string
 	Income       int
 	ExpenseTotal int
 	Balance      int
@@ -57,6 +58,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		categories = readCat()
 		data = balance(transactions, categories)
 		data.Transactions = transactions
+		data.Today = time.Now().Format("2006-01-02")
 		tmpl.Execute(w, data)
 	case "POST":
 		if err := r.ParseForm(); err != nil {

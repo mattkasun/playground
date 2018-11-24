@@ -14,7 +14,7 @@
 </div>
 
 <div id="Home" class="w3-container city">
-	<ul> 
+	<ul>
 		<li>Income ${{.Income}}</li>
 		<li>Expense ${{.ExpenseTotal}}</li>
 		<ul>
@@ -37,7 +37,7 @@
   <h2>Expense</h2>
   <p>Enter Expense Details</p>
 	<form action="/" method=post>
-  Date <input name="date" type="date" value="" required /><br>
+  Date <input name="date" type="date" value="{{.Today}}" required /><br>
 	Category
 	<select name="Category" size=1 >
 		{{range .Categories}}
@@ -59,7 +59,7 @@
   <p>Enter Income Details</p> 
 	<form action="/" method=post id="form2">
 		<label>Date</label>
-		<input name="date" type="date" value="" required/>
+		<input name="date" type="date" value="{{.Today}}" required/>
 		<br>
 		<label>Category</label>
 		<select name="Category" size=1>
