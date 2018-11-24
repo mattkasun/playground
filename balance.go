@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -11,17 +10,13 @@ func balance(data *PageData) {
 	expense := 0
 	income := 0
 	carryover := 0
-	todataay := time.Now()
-	year, week := todataay.ISOWeek()
-
-	fmt.Println(year, week)
+	today := time.Now()
+	year, week := today.ISOWeek()
 
 	for i := range data.Transactions {
 		transDate := data.Transactions[i].Date
 		transYear, transWeek := transDate.ISOWeek()
-		fmt.Println(transYear, transWeek)
 		if transYear == year && transWeek == week {
-			fmt.Println("use this transaction")
 			if data.Transactions[i].Expense {
 				if len(expenses) == 0 {
 					expenses = append(expenses, Expense{Cat: data.Transactions[i].Cat, Amount: data.Transactions[i].Amount})
@@ -52,7 +47,6 @@ func balance(data *PageData) {
 				carryover = carryover + data.Transactions[i].Amount
 			}
 		}
-		fmt.Println("Income", income, "expense", expense, "", balance, "carryover", carryover)
 	}
 	data.Income = income
 	data.ExpenseTotal = expense

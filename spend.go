@@ -42,9 +42,9 @@ type PageData struct {
 }
 
 var categories []Category
+var data PageData
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	var data PageData
 	tmpl := template.Must(template.ParseFiles("html/tabb.gohtml"))
 	if r.URL.Path != "/" {
 		http.Error(w, "404 Not Found\n"+r.URL.Path, http.StatusNotFound)
@@ -68,19 +68,23 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 			commitTrans(r, true)
 			data.Transactions = readTrans()
 			balance(&data)
+			fmt.Println(data)
 			tmpl.Execute(w, data)
 		case "income":
 			commitTrans(r, false)
 			data.Transactions = readTrans()
 			balance(&data)
+			fmt.Println(data)
 			tmpl.Execute(w, data)
 		case "addIncome":
 			addCategory(r, false)
 			data.Categories = readCat()
+			fmt.Println(data)
 			tmpl.Execute(w, data)
 		case "addExpense":
 			addCategory(r, true)
 			data.Categories = readCat()
+			fmt.Println(data)
 			tmpl.Execute(w, data)
 		default:
 			fmt.Println("not yet implemented")
