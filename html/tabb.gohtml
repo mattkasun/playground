@@ -31,6 +31,11 @@
   	<button class="w3-bar-item w3-button" onclick="openCity('Expense')">Expense</button>
   	<button class="w3-bar-item w3-button" onclick="openCity('Income')">Income</button>
 	</div>
+	<div class="w3-bar w3-blue">
+		<button class="w3-bar-item w3-circle w3-black">+</button>
+		<button class="w3-bar-item w3-teal">{{.Today}}</button>
+		<button class="w3-bar-item w3-circle w3-red">-</button>
+	</div>
 </div>
 
 <div id="Expense" class="w3-container city" style="display:none">

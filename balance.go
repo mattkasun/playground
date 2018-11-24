@@ -5,61 +5,58 @@ import (
 	"time"
 )
 
-func balance(t []Transaction, c []Category) PageData {
-	var data PageData
+func balance(data *PageData) {
 	var expenses []Expense
 	balance := 0
 	expense := 0
 	income := 0
 	carryover := 0
-	today := time.Now()
-	year, week := today.ISOWeek()
+	todataay := time.Now()
+	year, week := todataay.ISOWeek()
 
 	fmt.Println(year, week)
 
-	for i := range t {
-		transDate := t[i].Date
+	for i := range data.Transactions {
+		transDate := data.Transactions[i].Date
 		transYear, transWeek := transDate.ISOWeek()
 		fmt.Println(transYear, transWeek)
 		if transYear == year && transWeek == week {
 			fmt.Println("use this transaction")
-			if t[i].Expense {
+			if data.Transactions[i].Expense {
 				if len(expenses) == 0 {
-					expenses = append(expenses, Expense{Cat: t[i].Cat, Amount: t[i].Amount})
+					expenses = append(expenses, Expense{Cat: data.Transactions[i].Cat, Amount: data.Transactions[i].Amount})
 				} else {
-					found := false
+					foundata := false
 					for j := range expenses {
-						if expenses[j].Cat == t[i].Cat {
-							expenses[j].Amount = expenses[j].Amount + t[i].Amount
-							found = true
+						if expenses[j].Cat == data.Transactions[i].Cat {
+							expenses[j].Amount = expenses[j].Amount + data.Transactions[i].Amount
+							foundata = true
 						}
 					}
-					if found == false {
-						expenses = append(expenses, Expense{Cat: t[i].Cat, Amount: t[i].Amount})
+					if foundata == false {
+						expenses = append(expenses, Expense{Cat: data.Transactions[i].Cat, Amount: data.Transactions[i].Amount})
 					}
 				}
-				balance = balance - t[i].Amount
-				expense = expense + t[i].Amount
+				balance = balance - data.Transactions[i].Amount
+				expense = expense + data.Transactions[i].Amount
 			} else {
-				balance = balance + t[i].Amount
-				income = income + t[i].Amount
+				balance = balance + data.Transactions[i].Amount
+				income = income + data.Transactions[i].Amount
 			}
 		} else {
-			if t[i].Expense {
-				balance = balance - t[i].Amount
-				carryover = carryover - t[i].Amount
+			if data.Transactions[i].Expense {
+				balance = balance - data.Transactions[i].Amount
+				carryover = carryover - data.Transactions[i].Amount
 			} else {
-				balance = balance + t[i].Amount
-				carryover = carryover + t[i].Amount
+				balance = balance + data.Transactions[i].Amount
+				carryover = carryover + data.Transactions[i].Amount
 			}
 		}
-		fmt.Println("Income", income, "expense", expense, "balance", balance, "carryover", carryover)
+		fmt.Println("Income", income, "expense", expense, "", balance, "carryover", carryover)
 	}
 	data.Income = income
 	data.ExpenseTotal = expense
 	data.Balance = balance
 	data.Expenses = expenses
-	data.Categories = c
 	data.CarryOver = carryover
-	return data
 }

@@ -41,11 +41,10 @@ type PageData struct {
 	CarryOver    int
 }
 
-var data PageData
-var transactions []Transaction
 var categories []Category
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
+	var data PageData
 	tmpl := template.Must(template.ParseFiles("html/tabb.gohtml"))
 	if r.URL.Path != "/" {
 		http.Error(w, "404 Not Found\n"+r.URL.Path, http.StatusNotFound)
@@ -54,10 +53,9 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		//http.ServeFile(w, r, "html/tab.html")
-		transactions = readTrans()
-		categories = readCat()
-		data = balance(transactions, categories)
-		data.Transactions = transactions
+		data.Transactions = readTrans()
+		data.Categories = readCat()
+		balance(&data)
 		data.Today = time.Now().Format("2006-01-02")
 		tmpl.Execute(w, data)
 	case "POST":
@@ -67,33 +65,23 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		switch r.FormValue("form") {
 		case "expense":
-			transactions = commitTrans(r, true)
-			data = balance(transactions, categories)
-			data.Transactions = transactions
+			commitTrans(r, true)
+			data.Transactions = readTrans()
+			balance(&data)
 			tmpl.Execute(w, data)
 		case "income":
-			transactions = commitTrans(r, false)
-			data = balance(transactions, categories)
-			data.Transactions = transactions
+			commitTrans(r, false)
+			data.Transactions = readTrans()
+			balance(&data)
 			tmpl.Execute(w, data)
 		case "addIncome":
 			addCategory(r, false)
-			categories = readCat()
-			data.Categories = categories
+			data.Categories = readCat()
 			tmpl.Execute(w, data)
 		case "addExpense":
 			addCategory(r, true)
-			categories = readCat()
-			data.Categories = categories
+			data.Categories = readCat()
 			tmpl.Execute(w, data)
-		case "categories":
-			http.ServeFile(w, r, "html/category.html")
-		case "previous":
-			previous()
-			http.ServeFile(w, r, "html/main.html")
-		case "next":
-			next()
-			http.ServeFile(w, r, "html/main.html")
 		default:
 			fmt.Println("not yet implemented")
 			tmpl.Execute(w, data)
@@ -112,7 +100,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func commitTrans(r *http.Request, expense bool) []Transaction {
+func commitTrans(r *http.Request, expense bool) {
 
 	//r.ParseForm()
 	amount, _ := strconv.Atoi(r.FormValue("amount"))
@@ -122,9 +110,7 @@ func commitTrans(r *http.Request, expense bool) []Transaction {
 	}
 	cat := r.FormValue("Category")
 	transaction := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
-	transactions = append(transactions, transaction)
 	writeOne(transaction)
-	return transactions
 }
 
 func previous() {
