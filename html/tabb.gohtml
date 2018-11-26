@@ -43,7 +43,7 @@
   <h2>Expense</h2>
   <p>Enter Expense Details</p>
 	<form action="/" method=post>
-  Date <input name="date" type="date" value='{{.Start.Format "2006-01-02"}}' required/>
+  Date <input name="date" type="date" value='{{.Today.Format "2006-01-02"}}' required/>
 	Category
 	<select name="Category" size=1 >
 		{{range .Categories}}
@@ -65,7 +65,7 @@
   <p>Enter Income Details</p> 
 	<form action="/" method=post id="form2">
 		<label>Date</label>
-		<input name="date" type="date" value='{{.Start.Format "2006-01-02"}}' required/>
+		<input name="date" type="date" value='{{.Today.Format "2006-01-02"}}' required/>
 		<br>
 		<label>Category</label>
 		<select name="Category" size=1>
