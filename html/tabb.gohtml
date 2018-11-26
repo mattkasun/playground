@@ -91,7 +91,9 @@
 	{{.Start}}
 	<ul>
 		{{range .Transactions}}
-			{{if .Date.After $.Start }}
+	{{$one := .Date.After $.Start}}
+	{{$two := .Date.Before $.End}}
+			{{if and $one $two}}
 				<li>{{.Date.Format "2006-01-02"}} {{.Cat}} {{.Amount}} </li>
 		{{end}}
 		{{end}} 
