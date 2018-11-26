@@ -11,6 +11,7 @@
   <button class="w3-bar-item w3-button" onclick="openCity('Home')">Home</button>
   <button class="w3-bar-item w3-button" onclick="openCity('Transaction')">Transaction</button>
   <button class="w3-bar-item w3-button" onclick="openCity('Category')">Category</button>
+  <button class="w3-bar-item w3-button w3-right" onclick="openCity('Home')">...</button>
 </div>
 
 <div id="Home" class="w3-container city">
@@ -32,9 +33,9 @@
   	<button class="w3-bar-item w3-button" onclick="openCity('Income')">Income</button>
 	</div>
 	<div class="w3-bar w3-blue">
-		<button class="w3-bar-item w3-circle w3-black">+</button>
-		<button class="w3-bar-item w3-teal">{{.Today}}</button>
-		<button class="w3-bar-item w3-circle w3-red">-</button>
+		<button class="w3-bar-item w3-circle w3-black"><</button>
+		<button class="w3-bar-item w3-teal">{{.Start.Format "2006-01-02"}}</button>
+		<button class="w3-bar-item w3-circle w3-red">></button>
 	</div>
 </div>
 
@@ -42,7 +43,7 @@
   <h2>Expense</h2>
   <p>Enter Expense Details</p>
 	<form action="/" method=post>
-  Date <input name="date" type="date" value="{{.Today}}" required /><br>
+  Date <input name="date" type="date" value='{{.Start.Format "2006-01-02"}}' required/>
 	Category
 	<select name="Category" size=1 >
 		{{range .Categories}}
@@ -64,7 +65,7 @@
   <p>Enter Income Details</p> 
 	<form action="/" method=post id="form2">
 		<label>Date</label>
-		<input name="date" type="date" value="{{.Today}}" required/>
+		<input name="date" type="date" value='{{.Start.Format "2006-01-02"}}' required/>
 		<br>
 		<label>Category</label>
 		<select name="Category" size=1>
@@ -87,11 +88,19 @@
 
 <div id="Transaction" class="w3-container city" style="display:none">
   <h2>Transactions</h2>
+	{{.Start}}
 	<ul>
 		{{range .Transactions}}
-			<li>{{.Date}} {{.Cat}} {{.Amount}} </li>
+			{{if .Date.After $.Start }}
+				<li>{{.Date.Format "2006-01-02"}} {{.Cat}} {{.Amount}} </li>
 		{{end}}
+		{{end}} 
 	</ul> 
+	<div class="w3-bar w3-blue">
+		<button class="w3-bar-item w3-circle w3-black"><</button>
+		<button class="w3-bar-item w3-teal">{{.Start.Format "2006-01-02"}}</button>
+		<button class="w3-bar-item w3-circle w3-red">></button>
+	</div>
 </div>
 
 <div id="Category" class="w3-container city" style="display:none">

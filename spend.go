@@ -31,7 +31,8 @@ type Expense struct {
 
 //PageData - contains data for html template
 type PageData struct {
-	Today        string
+	Start        time.Time
+	End          time.Time
 	Income       int
 	ExpenseTotal int
 	Balance      int
@@ -41,7 +42,6 @@ type PageData struct {
 	CarryOver    int
 }
 
-var categories []Category
 var data PageData
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
@@ -56,7 +56,9 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		data.Transactions = readTrans()
 		data.Categories = readCat()
 		balance(&data)
-		data.Today = time.Now().Format("2006-01-02")
+		//today := time.Now()
+
+		data.Start, _ = time.Parse("2006-01-02", "2018-11-20")
 		tmpl.Execute(w, data)
 	case "POST":
 		if err := r.ParseForm(); err != nil {
