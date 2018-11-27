@@ -1,17 +1,12 @@
 package main
 
-import (
-	"time"
-)
-
 func balance(data *PageData, transactions []Transaction) {
 	var expenses []Expense
 	balance := 0
 	expense := 0
 	income := 0
 	carryover := 0
-	today := time.Now()
-	year, week := today.ISOWeek()
+	year, week := data.Today.ISOWeek()
 	data.Transactions = nil
 
 	for i := range transactions {

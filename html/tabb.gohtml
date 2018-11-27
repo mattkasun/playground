@@ -33,9 +33,15 @@
   	<button class="w3-bar-item w3-button" onclick="openCity('Income')">Income</button>
 	</div>
 	<div class="w3-bar w3-blue">
-		<button class="w3-bar-item w3-circle w3-black"><</button>
-		<button class="w3-bar-item w3-teal">{{.Start.Format "2006-01-02"}}</button>
-		<button class="w3-bar-item w3-circle w3-red">></button>
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-circle w3-black" type="submit"><</button>
+			<input type="hidden" name="form" value="back">
+		</form>
+		<button class="w3-bar-item w3-teal">{{.Start.Format "Jan 02"}} - {{.End.Format "Jan 02"}}</button>
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-circle w3-red" type="submit">></button>
+			<input type="hidden" name="form" value="forward">
+		</form>
 	</div>
 </div>
 

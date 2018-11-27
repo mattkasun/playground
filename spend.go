@@ -44,6 +44,7 @@ type PageData struct {
 }
 
 var data PageData
+var date = time.Now()
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("html/tabb.gohtml"))
@@ -53,14 +54,8 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	switch r.Method {
 	case "GET":
-		//http.ServeFile(w, r, "html/tab.html")
-		transactions := readTrans()
-		data.Categories = readCat()
-		balance(&data, transactions)
-		data.Today = time.Now()
-		//data.Today = time.Now().Format("2006-01-02")
-		//data.Start, _ = time.Parse("2006-01-02", "2018-11-20")
-		data.Start, data.End = week(data.Today)
+		date = time.Now()
+		data := initTemplateData(&date)
 		tmpl.Execute(w, data)
 	case "POST":
 		if err := r.ParseForm(); err != nil {
@@ -70,24 +65,29 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		switch r.FormValue("form") {
 		case "expense":
 			commitTrans(r, true)
-			transactions := readTrans()
-			balance(&data, transactions)
+			data = initTemplateData(&date)
 			tmpl.Execute(w, data)
 		case "income":
 			commitTrans(r, false)
-			transactions := readTrans()
-			balance(&data, transactions)
-			fmt.Println(data)
+			data = initTemplateData(&date)
 			tmpl.Execute(w, data)
 		case "addIncome":
 			addCategory(r, false)
-			data.Categories = readCat()
-			fmt.Println(data)
+			data = initTemplateData(&date)
 			tmpl.Execute(w, data)
 		case "addExpense":
 			addCategory(r, true)
-			data.Categories = readCat()
-			fmt.Println(data)
+			data = initTemplateData(&date)
+			tmpl.Execute(w, data)
+		case "back":
+			fmt.Println(date)
+			date = date.AddDate(0, 0, -7)
+			fmt.Println(date)
+			data = initTemplateData(&date)
+			tmpl.Execute(w, data)
+		case "forward":
+			date = date.AddDate(0, 0, 7)
+			data = initTemplateData(&date)
 			tmpl.Execute(w, data)
 		default:
 			fmt.Println("not yet implemented")
@@ -99,6 +99,15 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func initTemplateData(date *time.Time) PageData {
+	var data PageData
+	data.Today = *date
+	transactions := readTrans()
+	data.Categories = readCat()
+	balance(&data, transactions)
+	data.Start, data.End = week(data.Today)
+	return data
+}
 func main() {
 
 	fs := http.FileServer(http.Dir("stylesheet"))
