@@ -54,9 +54,9 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		//http.ServeFile(w, r, "html/tab.html")
-		data.Transactions = readTrans()
+		transactions := readTrans()
 		data.Categories = readCat()
-		balance(&data)
+		balance(&data, transactions)
 		data.Today = time.Now()
 		//data.Today = time.Now().Format("2006-01-02")
 		//data.Start, _ = time.Parse("2006-01-02", "2018-11-20")
@@ -70,14 +70,13 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		switch r.FormValue("form") {
 		case "expense":
 			commitTrans(r, true)
-			data.Transactions = readTrans()
-			balance(&data)
-			fmt.Println(data)
+			transactions := readTrans()
+			balance(&data, transactions)
 			tmpl.Execute(w, data)
 		case "income":
 			commitTrans(r, false)
-			data.Transactions = readTrans()
-			balance(&data)
+			transactions := readTrans()
+			balance(&data, transactions)
 			fmt.Println(data)
 			tmpl.Execute(w, data)
 		case "addIncome":
