@@ -89,6 +89,10 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 			date = date.AddDate(0, 0, 7)
 			data = initTemplateData(&date)
 			tmpl.Execute(w, data)
+		case "today":
+			date = time.Now()
+			data = initTemplateData(&date)
+			tmpl.Execute(w, data)
 		default:
 			fmt.Println("not yet implemented")
 			tmpl.Execute(w, data)
@@ -102,10 +106,10 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 func initTemplateData(date *time.Time) PageData {
 	var data PageData
 	data.Today = *date
+	data.Start, data.End = week(data.Today)
 	transactions := readTrans()
 	data.Categories = readCat()
 	balance(&data, transactions)
-	data.Start, data.End = week(data.Today)
 	return data
 }
 func main() {

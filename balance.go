@@ -11,6 +11,9 @@ func balance(data *PageData, transactions []Transaction) {
 
 	for i := range transactions {
 		transDate := transactions[i].Date
+		if transDate.After(data.End) {
+			continue
+		}
 		transYear, transWeek := transDate.ISOWeek()
 		if transYear == year && transWeek == week {
 			data.Transactions = append(data.Transactions, transactions[i])
