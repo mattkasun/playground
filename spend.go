@@ -31,17 +31,20 @@ type Expense struct {
 
 //PageData - contains data for html template
 type PageData struct {
+	Today        time.Time
+	Start        time.Time
+	End          time.Time
 	Income       int
 	ExpenseTotal int
 	Balance      int
 	Expenses     []Expense
 	Categories   []Category
 	Transactions []Transaction
+	CarryOver    int
 }
 
 var data PageData
-var transactions []Transaction
-var categories []Category
+var date = time.Now()
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("html/tabb.gohtml"))
@@ -51,11 +54,8 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	switch r.Method {
 	case "GET":
-		//http.ServeFile(w, r, "html/tab.html")
-		transactions = readTrans()
-		categories = readCat()
-		data = balance(transactions, categories)
-		data.Transactions = transactions
+		date = time.Now()
+		data := initTemplateData(&date)
 		tmpl.Execute(w, data)
 	case "POST":
 		if err := r.ParseForm(); err != nil {
@@ -64,33 +64,35 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		switch r.FormValue("form") {
 		case "expense":
-			transactions = commitTrans(r, true)
-			data = balance(transactions, categories)
-			data.Transactions = transactions
+			commitTrans(r, true)
+			data = initTemplateData(&date)
 			tmpl.Execute(w, data)
 		case "income":
-			transactions = commitTrans(r, false)
-			data = balance(transactions, categories)
-			data.Transactions = transactions
+			commitTrans(r, false)
+			data = initTemplateData(&date)
 			tmpl.Execute(w, data)
 		case "addIncome":
 			addCategory(r, false)
-			categories = readCat()
-			data.Categories = categories
+			data = initTemplateData(&date)
 			tmpl.Execute(w, data)
 		case "addExpense":
 			addCategory(r, true)
-			categories = readCat()
-			data.Categories = categories
+			data = initTemplateData(&date)
 			tmpl.Execute(w, data)
-		case "categories":
-			http.ServeFile(w, r, "html/category.html")
-		case "previous":
-			previous()
-			http.ServeFile(w, r, "html/main.html")
-		case "next":
-			next()
-			http.ServeFile(w, r, "html/main.html")
+		case "back":
+			fmt.Println(date)
+			date = date.AddDate(0, 0, -7)
+			fmt.Println(date)
+			data = initTemplateData(&date)
+			tmpl.Execute(w, data)
+		case "forward":
+			date = date.AddDate(0, 0, 7)
+			data = initTemplateData(&date)
+			tmpl.Execute(w, data)
+		case "today":
+			date = time.Now()
+			data = initTemplateData(&date)
+			tmpl.Execute(w, data)
 		default:
 			fmt.Println("not yet implemented")
 			tmpl.Execute(w, data)
@@ -101,6 +103,15 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func initTemplateData(date *time.Time) PageData {
+	var data PageData
+	data.Today = *date
+	data.Start, data.End = week(data.Today)
+	transactions := readTrans()
+	data.Categories = readCat()
+	balance(&data, transactions)
+	return data
+}
 func main() {
 
 	fs := http.FileServer(http.Dir("stylesheet"))
@@ -109,7 +120,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func commitTrans(r *http.Request, expense bool) []Transaction {
+func commitTrans(r *http.Request, expense bool) {
 
 	//r.ParseForm()
 	amount, _ := strconv.Atoi(r.FormValue("amount"))
@@ -119,9 +130,7 @@ func commitTrans(r *http.Request, expense bool) []Transaction {
 	}
 	cat := r.FormValue("Category")
 	transaction := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
-	transactions = append(transactions, transaction)
 	writeOne(transaction)
-	return transactions
 }
 
 func previous() {

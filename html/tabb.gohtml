@@ -9,30 +9,50 @@
 
 <div class="w3-bar w3-black">
   <button class="w3-bar-item w3-button" onclick="openCity('Home')">Home</button>
-  <button class="w3-bar-item w3-button" onclick="openCity('Expense')">Expense</button>
-  <button class="w3-bar-item w3-button" onclick="openCity('Income')">Income</button>
   <button class="w3-bar-item w3-button" onclick="openCity('Transaction')">Transaction</button>
   <button class="w3-bar-item w3-button" onclick="openCity('Category')">Category</button>
+  <button class="w3-bar-item w3-button w3-right" onclick="openCity('Home')">...</button>
 </div>
 
 <div id="Home" class="w3-container city">
-	<ul> 
-					<li>Income ${{.Income}}</li>
-					<li>Expense ${{.ExpenseTotal}}</li>
-					<ul>
-									{{range .Expenses}}
-									<li>{{.Cat}} ${{.Amount}}</li>
-									{{end}}
-					</ul>
-					<li>Balance ${{.Balance}}</li>
+	<ul>
+		<li>Income ${{.Income}}</li>
+		<li>Expense ${{.ExpenseTotal}}</li>
+		<ul>
+			{{range .Expenses}}
+				<li>{{.Cat}} ${{.Amount}}</li>
+			{{end}}
+		</ul>
+		<hr style="border-top: 1px dotted black"/>
+		
+		<li>CarryOver ${{.CarryOver}}
+		<li>Balance ${{.Balance}}</li>
 	</ul>
+	<div class="w3-bar w3-black">
+  	<button class="w3-bar-item w3-button" onclick="openCity('Expense')">Expense</button>
+  	<button class="w3-bar-item w3-button" onclick="openCity('Income')">Income</button>
+	</div>
+	<div class="w3-bar w3-blue">
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-circle w3-black" type="submit"><</button>
+			<input type="hidden" name="form" value="back">
+		</form>
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-teal" type="submit">{{.Start.Format "Jan 02"}} - {{.End.Format "Jan 02"}}</button>
+			<input type="hidden" name="form" value="today">
+		</form>
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-circle w3-red" type="submit">></button>
+			<input type="hidden" name="form" value="forward">
+		</form>
+	</div>
 </div>
 
 <div id="Expense" class="w3-container city" style="display:none">
   <h2>Expense</h2>
   <p>Enter Expense Details</p>
 	<form action="/" method=post>
-  Date <input name="date" type="date" value="" required /><br>
+  Date <input name="date" type="date" value='{{.Today.Format "2006-01-02"}}' required/>
 	Category
 	<select name="Category" size=1 >
 		{{range .Categories}}
@@ -54,7 +74,7 @@
   <p>Enter Income Details</p> 
 	<form action="/" method=post id="form2">
 		<label>Date</label>
-		<input name="date" type="date" value="" required/>
+		<input name="date" type="date" value='{{.Today.Format "2006-01-02"}}' required/>
 		<br>
 		<label>Category</label>
 		<select name="Category" size=1>
@@ -77,11 +97,26 @@
 
 <div id="Transaction" class="w3-container city" style="display:none">
   <h2>Transactions</h2>
+	{{.Start}}
 	<ul>
 		{{range .Transactions}}
-			<li>{{.Date}} {{.Cat}} {{.Amount}} </li>
-		{{end}}
+				<li>{{.Date.Format "2006-01-02"}} {{.Cat}} {{.Amount}} </li>
+		{{end}} 
 	</ul> 
+	<div class="w3-bar w3-blue">
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-circle w3-black" type="submit"><</button>
+			<input type="hidden" name="form" value="back">
+		</form>
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-teal" type="submit">{{.Start.Format "Jan 02"}} - {{.End.Format "Jan 02"}}</button>
+			<input type="hidden" name="form" value="today">
+		</form>
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-circle w3-red" type="submit">></button>
+			<input type="hidden" name="form" value="forward">
+		</form>
+	</div>
 </div>
 
 <div id="Category" class="w3-container city" style="display:none">
