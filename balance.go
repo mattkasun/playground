@@ -11,10 +11,12 @@ func balance(data *PageData, transactions []Transaction) {
 
 	for i := range transactions {
 		transDate := transactions[i].Date
+		// ignore transactions in the future
 		if transDate.After(data.End) {
 			continue
 		}
 		transYear, transWeek := transDate.ISOWeek()
+		//handle current time period transactions
 		if transYear == year && transWeek == week {
 			data.Transactions = append(data.Transactions, transactions[i])
 			if transactions[i].Expense {
@@ -38,6 +40,7 @@ func balance(data *PageData, transactions []Transaction) {
 				balance = balance + transactions[i].Amount
 				income = income + transactions[i].Amount
 			}
+			//update balance, carryover for transaction before current period.
 		} else {
 			if transactions[i].Expense {
 				balance = balance - transactions[i].Amount

@@ -2,9 +2,36 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
+	"reflect"
 )
+
+func updateTrans(old, new Transaction) {
+	var transactions []Transaction
+	f, err := os.Open("trans.data")
+	defer f.Close()
+	if err != nil {
+		log.Fatal("error opening file ", err)
+	}
+
+	decoder := json.NewDecoder(f)
+	for decoder.More() {
+		var transaction Transaction
+		err := decoder.Decode(&transaction)
+		if err != nil {
+			log.Fatal("decoding transaction", err)
+		}
+		if reflect.DeepEqual(transaction, old) {
+			fmt.Println("updating transacation: \n", old, "\n", new)
+			transactions = append(transactions, new)
+		} else {
+			transactions = append(transactions, transaction)
+		}
+	}
+	writeAll(transactions)
+}
 
 func readTrans() []Transaction {
 

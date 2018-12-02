@@ -10,12 +10,12 @@ import (
 
 func writeAll(transactions []Transaction) {
 
-	f, err := os.OpenFile("trans.data", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+	f, err := os.OpenFile("trans.data", os.O_WRONLY|os.O_TRUNC, 0644)
 	defer f.Close()
 	if err != nil {
-		log.Fatal("error creating file", err)
+		log.Fatal("error opening file", err)
 	}
-
+	total := 0
 	for i := range transactions {
 		b, err := json.Marshal(transactions[i])
 		if err != nil {
@@ -25,8 +25,9 @@ func writeAll(transactions []Transaction) {
 		if err != nil {
 			log.Fatal("write err:", err)
 		}
-		fmt.Println("wrote ", n, " bytes")
+		total = total + n
 	}
+	fmt.Println("wrote ", total, " bytes")
 }
 func writeOne(t Transaction) {
 	f, err := os.OpenFile("trans.data", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
