@@ -31,6 +31,7 @@ type Expense struct {
 
 //PageData - contains data for html template
 type PageData struct {
+	Page         string
 	Today        time.Time
 	Start        time.Time
 	End          time.Time
@@ -40,14 +41,22 @@ type PageData struct {
 	Expenses     []Expense
 	Categories   []Category
 	Transactions []Transaction
+	Transaction  Transaction
 	CarryOver    int
+}
+
+//EditData - contains data to edit a transaction
+type EditData struct {
+	Old        Transaction
+	Categories []Category
 }
 
 var data PageData
 var date = time.Now()
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("html/tabb.gohtml"))
+	tmpl := template.Must(template.ParseFiles(
+		"html/layout.gohtml", "html/buttonbar.gohtml", "html/mainpage.gohtml"))
 	if r.URL.Path != "/" {
 		http.Error(w, "404 Not Found\n"+r.URL.Path, http.StatusNotFound)
 		return
@@ -55,8 +64,9 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		date = time.Now()
-		data := initTemplateData(&date)
-		tmpl.Execute(w, data)
+		initTemplateData(&date, &data)
+		data.Page = "Home"
+		tmpl.ExecuteTemplate(w, "layout", data)
 	case "POST":
 		if err := r.ParseForm(); err != nil {
 			fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -65,52 +75,81 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		switch r.FormValue("form") {
 		case "expense":
 			commitTrans(r, true)
-			data = initTemplateData(&date)
-			tmpl.Execute(w, data)
+			initTemplateData(&date, &data)
+			data.Page = "Expense"
+			tmpl.ExecuteTemplate(w, "layout", data)
 		case "income":
 			commitTrans(r, false)
-			data = initTemplateData(&date)
-			tmpl.Execute(w, data)
+			initTemplateData(&date, &data)
+			data.Page = "Income"
+			tmpl.ExecuteTemplate(w, "layout", data)
 		case "addIncome":
 			addCategory(r, false)
-			data = initTemplateData(&date)
-			tmpl.Execute(w, data)
+			initTemplateData(&date, &data)
+			data.Page = "Income"
+			tmpl.ExecuteTemplate(w, "layout", data)
 		case "addExpense":
 			addCategory(r, true)
-			data = initTemplateData(&date)
-			tmpl.Execute(w, data)
+			initTemplateData(&date, &data)
+			data.Page = "Expense"
+			tmpl.ExecuteTemplate(w, "layout", data)
 		case "back":
-			fmt.Println(date)
 			date = date.AddDate(0, 0, -7)
-			fmt.Println(date)
-			data = initTemplateData(&date)
-			tmpl.Execute(w, data)
+			initTemplateData(&date, &data)
+			data.Page = "Home"
+			tmpl.ExecuteTemplate(w, "layout", data)
 		case "forward":
 			date = date.AddDate(0, 0, 7)
-			data = initTemplateData(&date)
-			tmpl.Execute(w, data)
+			initTemplateData(&date, &data)
+			data.Page = "Home"
+			tmpl.ExecuteTemplate(w, "layout", data)
 		case "today":
 			date = time.Now()
-			data = initTemplateData(&date)
-			tmpl.Execute(w, data)
-		default:
-			fmt.Println("not yet implemented")
-			tmpl.Execute(w, data)
-		}
+			initTemplateData(&date, &data)
+			data.Page = "Home"
+			tmpl.ExecuteTemplate(w, "layout", data)
+		case "edit":
+			var data EditData
+			fmt.Println(r.Form, r.FormValue("form"), r.FormValue("name"), r.FormValue("transaction"))
+			data.Old = edit(r)
+			data.Categories = readCat()
 
+			tmpl = template.Must(template.ParseFiles("html/edit.gohtml"))
+			fmt.Println(data)
+			tmpl.ExecuteTemplate(w, "layout", data)
+		case "update":
+			fmt.Println("Update: ", r.Form)
+			//read old values
+			date, err := time.Parse("2006-01-02", r.FormValue("OldDate"))
+			if err != nil {
+				log.Fatal(err)
+			}
+			amount, _ := strconv.Atoi(r.FormValue("OldAmount"))
+			cat := r.FormValue("OldCat")
+			expense, _ := strconv.ParseBool(r.FormValue("OldExpense"))
+			old := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
+			date, err = time.Parse("2006-01-02", r.FormValue("date"))
+			if err != nil {
+				log.Fatal(err)
+			}
+			amount, _ = strconv.Atoi(r.FormValue("Amount"))
+			cat = r.FormValue("Category")
+			new := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
+			updateTrans(old, new)
+		default:
+			fmt.Println(w, "not yet implemented", r.FormValue("form"))
+		}
 	default:
 		fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
 	}
 }
 
-func initTemplateData(date *time.Time) PageData {
-	var data PageData
+func initTemplateData(date *time.Time, data *PageData) {
 	data.Today = *date
 	data.Start, data.End = week(data.Today)
 	transactions := readTrans()
 	data.Categories = readCat()
-	balance(&data, transactions)
-	return data
+	balance(data, transactions)
 }
 func main() {
 
@@ -133,6 +172,18 @@ func commitTrans(r *http.Request, expense bool) {
 	writeOne(transaction)
 }
 
+func edit(r *http.Request) Transaction {
+	var transaction Transaction
+	amount, _ := strconv.Atoi(r.FormValue("Amount"))
+	expense, _ := strconv.ParseBool(r.FormValue("Expense"))
+	date, err := time.Parse("2006-01-02", r.FormValue("Date"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	cat := r.FormValue("Cat")
+	transaction = Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
+	return transaction
+}
 func previous() {
 	fmt.Println("func previous")
 }

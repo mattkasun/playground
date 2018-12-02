@@ -1,0 +1,51 @@
+{{define "layout"}}
+
+<html>
+<head>
+<title>Spending Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+<div id="Edit" class="w3-container tab">
+  <h2>Edit Transaction</h2>
+  <form action="/" method=post>
+    Date
+    <input name="date" type="date" value='{{.Old.Date.Format "2006-01-02"}}'/>
+    <input type="hidden" name="OldDate" value='{{.Old.Date.Format "2006-01-02"}}'/>
+    <input type="hidden" name="OldExpense" value='{{.Old.Expense}}'/>
+    <input type="hidden" name="OldCat" value="{{.Old.Cat}}"/>
+    <input type="hidden" name="OldAmount" value="{{.Old.Amount}}"/>
+    Category
+    <select name="Category"> 
+    {{$cat := .Old.Cat}}
+    {{if .Old.Expense}}
+      {{range .Categories}}
+        {{if .ExpenseCat}}
+            {{if eq .Name $cat}}
+                <option value="{{.Name}}" selected>{{.Name}}</option>
+            {{else }}
+                <option value="{{.Name}}">{{.Name}}</option>
+            {{end}}
+        {{end}}
+      {{end}}
+    {{else}}
+        {{range .Categories}}
+            {{if not .ExpenseCat}}
+                <option value="{{.Name}}">{{.Name}}</option>
+            {{end}}
+        {{end}}
+    {{end}}
+    </select>
+    Amount
+    <input name="Amount" type="number" value="{{.Old.Amount}}"/>
+    <br>
+    <input type="submit" value=Update>
+    <input type="reset">
+    <input type="hidden" name="form" value="update"/>
+
+
+
+</body>
+</html>
+{{end}}
