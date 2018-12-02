@@ -5,6 +5,9 @@
 <title>Spending Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+    form {display: inline; }
+</style>
 </head>
 <body>
 <div id="Edit" class="w3-container tab">
@@ -16,7 +19,7 @@
     <input type="hidden" name="OldExpense" value='{{.Old.Expense}}'/>
     <input type="hidden" name="OldCat" value="{{.Old.Cat}}"/>
     <input type="hidden" name="OldAmount" value="{{.Old.Amount}}"/>
-    Category
+    <br>Category
     <select name="Category"> 
     {{$cat := .Old.Cat}}
     {{if .Old.Expense}}
@@ -37,14 +40,18 @@
         {{end}}
     {{end}}
     </select>
-    Amount
+    <br>Amount
     <input name="Amount" type="number" value="{{.Old.Amount}}"/>
+    <br>
     <br>
     <input type="submit" value=Update>
     <input type="reset">
     <input type="hidden" name="form" value="update"/>
-
-
+  </form>
+  <form method=post>
+    <input type="submit" value=Cancel>
+    <input type="hidden" name="form" value="cancel"/>
+  </form>
 
 </body>
 </html>

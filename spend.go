@@ -139,7 +139,10 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 			initTemplateData(&date, &data)
 			data.Page = "Transaction"
 			tmpl.ExecuteTemplate(w, "layout", data)
-
+		case "cancel":
+			initTemplateData(&date, &data)
+			data.Page = "Transaction"
+			tmpl.ExecuteTemplate(w, "layout", data)
 		default:
 			fmt.Println(w, "not yet implemented", r.FormValue("form"))
 		}
