@@ -26,6 +26,8 @@ func updateTrans(old, new Transaction) {
 		if reflect.DeepEqual(transaction, old) {
 			fmt.Println("updating transacation: \n", old, "\n", new)
 			transactions = append(transactions, new)
+			//found it, don't change any more
+			old = Transaction{}
 		} else {
 			transactions = append(transactions, transaction)
 		}

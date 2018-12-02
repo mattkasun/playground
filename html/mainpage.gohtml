@@ -1,5 +1,20 @@
 {{ define "content"}}
 <div id="Home" class="w3-container tab">
+	<div class="w3-bar w3-blue">
+		<br>
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-circle w3-black" type="submit"><</button>
+			<input type="hidden" name="form" value="back">
+		</form>
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-teal" type="submit">{{.Start.Format "Jan 02"}} - {{.End.Format "Jan 02"}}</button>
+			<input type="hidden" name="form" value="today">
+		</form>
+		<form action="/" method=post>
+			<button class="w3-bar-item w3-circle w3-red" type="submit">></button>
+			<input type="hidden" name="form" value="forward">
+		</form>
+	</div>
 	<ul>
 		<li>Income ${{.Income}}</li>
 		<li>Expense ${{.ExpenseTotal}}</li>
@@ -16,20 +31,6 @@
 	<div class="w3-bar w3-black">
   	<button class="w3-bar-item w3-button" onclick="openTab('Expense')">Expense</button>
   	<button class="w3-bar-item w3-button" onclick="openTab('Income')">Income</button>
-	</div>
-	<div class="w3-bar w3-blue">
-		<form action="/" method=post>
-			<button class="w3-bar-item w3-circle w3-black" type="submit"><</button>
-			<input type="hidden" name="form" value="back">
-		</form>
-		<form action="/" method=post>
-			<button class="w3-bar-item w3-teal" type="submit">{{.Start.Format "Jan 02"}} - {{.End.Format "Jan 02"}}</button>
-			<input type="hidden" name="form" value="today">
-		</form>
-		<form action="/" method=post>
-			<button class="w3-bar-item w3-circle w3-red" type="submit">></button>
-			<input type="hidden" name="form" value="forward">
-		</form>
 	</div>
 </div>
 
