@@ -136,6 +136,10 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 			cat = r.FormValue("Category")
 			new := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
 			updateTrans(old, new)
+			initTemplateData(&date, &data)
+			data.Page = "Transaction"
+			tmpl.ExecuteTemplate(w, "layout", data)
+
 		default:
 			fmt.Println(w, "not yet implemented", r.FormValue("form"))
 		}
