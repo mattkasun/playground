@@ -10,7 +10,7 @@ import (
 
 func writeAll(transactions []Transaction) {
 
-	f, err := os.OpenFile("trans.data", os.O_WRONLY|os.O_TRUNC, 0644)
+	f, err := os.OpenFile("data/trans.data", os.O_WRONLY|os.O_TRUNC, 0644)
 	defer f.Close()
 	if err != nil {
 		log.Fatal("error opening file", err)
@@ -30,7 +30,7 @@ func writeAll(transactions []Transaction) {
 	fmt.Println("wrote ", total, " bytes")
 }
 func writeOne(t Transaction) {
-	f, err := os.OpenFile("trans.data", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+	f, err := os.OpenFile("data/trans.data", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
 	defer f.Close()
 	if err != nil {
 		log.Fatal("error creating file", err)
@@ -48,7 +48,7 @@ func writeOne(t Transaction) {
 }
 
 func addCategory(r *http.Request, expense bool) {
-	f, err := os.OpenFile("category.data", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+	f, err := os.OpenFile("data/category.data", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
 	defer f.Close()
 	if err != nil {
 		log.Fatal("error creating file", err)
