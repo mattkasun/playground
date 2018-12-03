@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  playground:
+    image: playground
+    restart: always
+    entrypoint: /playground
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/playground_data:/data"

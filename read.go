@@ -10,7 +10,7 @@ import (
 
 func updateTrans(old, new Transaction) {
 	var transactions []Transaction
-	f, err := os.Open("trans.data")
+	f, err := os.Open("data/trans.data")
 	defer f.Close()
 	if err != nil {
 		log.Fatal("error opening file ", err)
@@ -38,7 +38,7 @@ func updateTrans(old, new Transaction) {
 func readTrans() []Transaction {
 
 	var transactions []Transaction
-	f, err := os.Open("trans.data")
+	f, err := os.Open("data/trans.data")
 	defer f.Close()
 	if err != nil {
 		log.Fatal("error opening file ", err)
@@ -58,7 +58,7 @@ func readTrans() []Transaction {
 
 func readCat() []Category {
 	var categories []Category
-	f, err := os.Open("category.data")
+	f, err := os.Open("data/category.data")
 	defer f.Close()
 	if err != nil {
 		log.Fatal("error opening category file ", err)
