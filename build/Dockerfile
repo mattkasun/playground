@@ -1,4 +1,4 @@
-FROM scratch
+FROM busybox
 
 ADD playground /
 ADD html/*gohtml /html/
