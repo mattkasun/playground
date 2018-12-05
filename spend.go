@@ -64,8 +64,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		date = time.Now()
-		data.init(&date)
-		data.Page = "Home"
+		data.init(&date, "Home")
 		tmpl.ExecuteTemplate(w, "layout", data)
 	case "POST":
 		if err := r.ParseForm(); err != nil {
@@ -75,38 +74,31 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		switch r.FormValue("form") {
 		case "expense":
 			commitTrans(r, true)
-			data.init(&date)
-			data.Page = "Expense"
+			data.init(&date, "Home")
 			tmpl.ExecuteTemplate(w, "layout", data)
 		case "income":
 			commitTrans(r, false)
-			data.init(&date)
-			data.Page = "Income"
+			data.init(&date, "Home")
 			tmpl.ExecuteTemplate(w, "layout", data)
 		case "addIncome":
 			addCategory(r, false)
-			data.init(&date)
-			data.Page = "Income"
+			data.init(&date, "Income")
 			tmpl.ExecuteTemplate(w, "layout", data)
 		case "addExpense":
 			addCategory(r, true)
-			data.init(&date)
-			data.Page = "Expense"
+			data.init(&date, "Expense")
 			tmpl.ExecuteTemplate(w, "layout", data)
 		case "back":
 			date = date.AddDate(0, 0, -7)
-			data.init(&date)
-			data.Page = "Home"
+			data.init(&date, "Home")
 			tmpl.ExecuteTemplate(w, "layout", data)
 		case "forward":
 			date = date.AddDate(0, 0, 7)
-			data.init(&date)
-			data.Page = "Home"
+			data.init(&date, "Home")
 			tmpl.ExecuteTemplate(w, "layout", data)
 		case "today":
 			date = time.Now()
-			data.init(&date)
-			data.Page = "Home"
+			data.init(&date, "Home")
 			tmpl.ExecuteTemplate(w, "layout", data)
 		case "edit":
 			var data EditData
@@ -136,12 +128,10 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 			cat = r.FormValue("Category")
 			new := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
 			updateTrans(old, new)
-			data.init(&date)
-			data.Page = "Transaction"
+			data.init(&date, "Transaction")
 			tmpl.ExecuteTemplate(w, "layout", data)
 		case "cancel":
-			data.init(&date)
-			data.Page = "Transaction"
+			data.init(&date, "Transaction")
 			tmpl.ExecuteTemplate(w, "layout", data)
 		default:
 			fmt.Println(w, "not yet implemented", r.FormValue("form"))
@@ -151,7 +141,8 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (data *PageData) init(date *time.Time) {
+func (data *PageData) init(date *time.Time, page string) {
+	data.Page = page
 	data.Today = *date
 	data.Start, data.End = week(data.Today)
 	transactions := readTrans()
