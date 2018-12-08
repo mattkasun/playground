@@ -1,8 +1,13 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"time"
+
+	"github.com/gin-gonic/gin"
+)
 
 var data PageData
+var date = time.Now()
 
 func main() {
 	//set router to default
