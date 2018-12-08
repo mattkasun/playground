@@ -1,0 +1,109 @@
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func (data *PageData) init(date *time.Time, page string) {
+	data.Page = page
+	data.Today = *date
+	data.Start, data.End = week(data.Today)
+	transactions := readTrans()
+	data.Categories = readCat()
+	balance(data, transactions)
+}
+
+func week(date time.Time) (time.Time, time.Time) {
+
+	var start, end time.Time
+
+	//date := time.Date(2010, 12, 2, 12, 30, 0, 0, time.UTC)
+	day := date.Weekday()
+	year, week := date.ISOWeek()
+	fmt.Println(date, day, week, year)
+	switch day {
+	case 0:
+		start = date.AddDate(0, 0, -6)
+		end = date.AddDate(0, 0, 0)
+	case 1:
+		start = date.AddDate(0, 0, 0)
+		end = date.AddDate(0, 0, 6)
+	case 2:
+		start = date.AddDate(0, 0, -1)
+		end = date.AddDate(0, 0, 5)
+	case 3:
+		start = date.AddDate(0, 0, -2)
+		end = date.AddDate(0, 0, 4)
+	case 4:
+		start = date.AddDate(0, 0, -3)
+		end = date.AddDate(0, 0, 3)
+	case 5:
+		start = date.AddDate(0, 0, -4)
+		end = date.AddDate(0, 0, 2)
+	case 6:
+		start = date.AddDate(0, 0, -5)
+		end = date.AddDate(0, 0, 1)
+	default:
+		fmt.Println("switch not working")
+	}
+	return start, end
+}
+
+func balance(data *PageData, transactions []Transaction) {
+	var expenses []Expense
+	balance := 0
+	expense := 0
+	income := 0
+	carryover := 0
+	year, week := data.Today.ISOWeek()
+	data.Transactions = nil
+
+	for i := range transactions {
+		transDate := transactions[i].Date
+		// ignore transactions in the future
+		if transDate.After(data.End) {
+			continue
+		}
+		transYear, transWeek := transDate.ISOWeek()
+		//handle current time period transactions
+		if transYear == year && transWeek == week {
+			data.Transactions = append(data.Transactions, transactions[i])
+			if transactions[i].Expense {
+				if len(expenses) == 0 {
+					expenses = append(expenses, Expense{Cat: transactions[i].Cat, Amount: transactions[i].Amount})
+				} else {
+					foundata := false
+					for j := range expenses {
+						if expenses[j].Cat == transactions[i].Cat {
+							expenses[j].Amount = expenses[j].Amount + transactions[i].Amount
+							foundata = true
+						}
+					}
+					if foundata == false {
+						expenses = append(expenses, Expense{Cat: transactions[i].Cat, Amount: transactions[i].Amount})
+					}
+				}
+				balance = balance - transactions[i].Amount
+				expense = expense + transactions[i].Amount
+			} else {
+				balance = balance + transactions[i].Amount
+				income = income + transactions[i].Amount
+			}
+			//update balance, carryover for transaction before current period.
+		} else {
+			if transactions[i].Expense {
+				balance = balance - transactions[i].Amount
+				carryover = carryover - transactions[i].Amount
+			} else {
+				balance = balance + transactions[i].Amount
+				carryover = carryover + transactions[i].Amount
+			}
+		}
+	}
+	data.Income = income
+	data.ExpenseTotal = expense
+	data.Balance = balance
+	data.Expenses = expenses
+	data.CarryOver = carryover
+}
