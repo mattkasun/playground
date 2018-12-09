@@ -8,4 +8,10 @@ func initializeRoutes(router *gin.Engine) {
 	router.POST("/back", backHandler)
 	router.POST("today", todayHandler)
 	router.POST("forward", forwardHandler)
+	router.POST("expense", expenseHandler)
+	router.POST("income", incomeHandler)
+	router.POST("newExpense", newExpenseHandler)
+	router.POST("edit", editHandler)
+	router.POST("update", updateHandler)
+	router.POST("cancel", cancelHandler)
 }

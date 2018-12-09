@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func writeAll(transactions []Transaction) {
@@ -47,23 +48,20 @@ func writeOne(t Transaction) {
 	fmt.Println("wrote ", n, " bytes")
 }
 
-func addCategory(r *http.Request, expense bool) {
+func addCategory(c *gin.Context, expense bool) {
 	f, err := os.OpenFile("data/category.data", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
 	defer f.Close()
 	if err != nil {
 		log.Fatal("error creating file", err)
 	}
-	name := r.FormValue("category")
+	name := c.PostForm("category")
 	category := Category{ExpenseCat: expense, Name: name}
 	b, err := json.Marshal(category)
 	if err != nil {
 		log.Fatal("encoding error", err)
 	}
-	n, err := f.Write(b)
+	_, err = f.Write(b)
 	if err != nil {
 		log.Fatal("write error", err)
 	}
-
-	fmt.Println("wrote ", n, " bytes")
-
 }

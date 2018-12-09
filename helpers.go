@@ -2,7 +2,11 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (data *PageData) init(date *time.Time, page string) {
@@ -106,4 +110,28 @@ func balance(data *PageData, transactions []Transaction) {
 	data.Balance = balance
 	data.Expenses = expenses
 	data.CarryOver = carryover
+}
+
+func commitTrans(c *gin.Context, expense bool) {
+	amount, _ := strconv.Atoi(c.PostForm("amount"))
+	date, err := time.Parse("2006-01-02", c.PostForm("date"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	cat := c.PostForm("Category")
+	transaction := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
+	writeOne(transaction)
+}
+
+func edit(c *gin.Context) Transaction {
+	var transaction Transaction
+	amount, _ := strconv.Atoi(c.PostForm("Amount"))
+	expense, _ := strconv.ParseBool(c.PostForm("Expense"))
+	date, err := time.Parse("2006-01-02", c.PostForm("Date"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	cat := c.PostForm("Cat")
+	transaction = Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
+	return transaction
 }
