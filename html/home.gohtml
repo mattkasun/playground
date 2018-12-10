@@ -1,0 +1,23 @@
+{{ define "home" }}
+<div id="Home" class="w3-container tab">
+	{{ template "datebar" . }}
+	<ul>
+		<li>Income ${{.Income}}</li>
+		<li>Expense ${{.ExpenseTotal}}</li>
+		<ul>
+			{{range .Expenses}}
+				<li>{{.Cat}} ${{.Amount}}</li>
+			{{end}}
+		</ul>
+		<hr style="border-top: 1px dotted black"/>
+		<li>CarryOver ${{.CarryOver}}</li>
+		<li>Balance ${{.Balance}}</li>
+	</ul>
+	<div class="w3-bar w3-black">
+		<button class="w3-bar-item w3-button" onClick="openTab('Expense')">Expense</button>
+		<button class="w3-bar-item w3-button" onClick="openTab('Income')">Income</button>
+	</div>
+</div>
+
+{{ end }}
+	

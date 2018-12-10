@@ -8,18 +8,15 @@
 </head>
 <body onLoad="openTab('{{.Page}}')">
 {{template "buttonbar"}}
-{{template "content" . }}
-<script>
-function openTab(tabName) {
-    var i;
-    var x = document.getElementsByClassName ("tab");
-    for (i=0; i<x.length; i++) {
-        x[i].style.display="none";
-    }
-    document.getElementById(tabName).style.display = "block";
-}
-</script>
+{{template "home" . }}
+{{template "expense" . }}
+{{template "income" . }}
+{{template "transaction" . }}
+{{template "category" . }}
+{{template "addexpense" . }}
+{{template "addincome" . }}
+{{/* {{template "settings" . }} */}}
+{{ template "script"}}
 </body>
 </html>
 {{end}}
-}

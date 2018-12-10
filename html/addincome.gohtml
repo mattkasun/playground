@@ -1,0 +1,13 @@
+{{ define "addincome" }}
+
+<div id="AddIncome" class="w3-container tab" style="display:none">
+	<h2>Add New Income Category</h2>
+	<form action="/" method=post>
+		Name<input name="category" type="text" value="" required/>
+		<br>
+		<input type="submit" value=OK>
+		<button onclick="openTab('Category')">Cancel</button>
+		<input type="hidden" name="form" value="addIncome">
+	</form>
+</div>
+{{ end }}

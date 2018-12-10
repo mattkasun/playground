@@ -1,0 +1,12 @@
+{{ define "addexpense"}}
+
+<div id="AddExpense" class="w3-container tab" style="display:none">
+	<h2>Add New Expense Category</h2>
+	<form action="/newExpense" method=post>
+		Name<input name="category" type="text" value="" required/>
+		<br>
+		<input type="submit" value=OK>
+		<button onclick="openTab('Category')">Cancel</button>
+	</form>
+</div>
+{{end}}
