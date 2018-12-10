@@ -1,0 +1,159 @@
+{{ define "content"}}
+<div id="Home" class="w3-container tab">
+	<div class="w3-bar w3-blue">
+		<form action="/back" method=post>
+			<button class="w3-bar-item w3-circle w3-black" type="submit"><</button>
+		</form>
+		<form action="/today" method=post>
+			<button class="w3-bar-item w3-teal" type="submit">{{.Start.Format "Jan 02"}} - {{.End.Format "Jan 02"}}</button>
+		</form>
+		<form action="/forward" method=post>
+			<button class="w3-bar-item w3-circle w3-red" type="submit">></button>
+		</form>
+	</div>
+	<ul>
+		<li>Income ${{.Income}}</li>
+		<li>Expense ${{.ExpenseTotal}}</li>
+		<ul>
+			{{range .Expenses}}
+				<li>{{.Cat}} ${{.Amount}}</li>
+			{{end}}
+		</ul>
+		<hr style="border-top: 1px dotted black"/>
+		
+		<li>CarryOver ${{.CarryOver}}
+		<li>Balance ${{.Balance}}</li>
+	</ul>
+	<div class="w3-bar w3-black">
+  	<button class="w3-bar-item w3-button" onclick="openTab('Expense')">Expense</button>
+  	<button class="w3-bar-item w3-button" onclick="openTab('Income')">Income</button>
+	</div>
+</div>
+
+<div id="Expense" class="w3-container tab" style="display:none">
+  <h2>Expense</h2>
+  <p>Enter Expense Details</p>
+	<form action="/expense" method=post>
+  Date <input name="date" type="date" value='{{.Today.Format "2006-01-02"}}' required/>
+	<br>
+	Category
+	<select name="Category" size=1 >
+		{{range .Categories}}
+			{{if .ExpenseCat }}
+				<option value="{{.Name}}">{{.Name}}</option>
+			{{end}}
+		{{end}}
+	</select><br>
+  Amount
+	<input name="amount" type="number" value="" required/><br><br>
+	<input type="submit" value=OK>
+  <button onclick="openTab('Home')">Cancel</button>
+	</form>
+</div>
+
+<div id="Income" class="w3-container tab" style="display:none">
+  <h2>Income</h2>
+  <p>Enter Income Details</p> 
+	<form action="/income" method=post>
+		<label>Date</label>
+		<input name="date" type="date" value='{{.Today.Format "2006-01-02"}}' required/>
+		<br>
+		<label>Category</label>
+		<select name="Category" size=1>
+			{{range .Categories}}
+				{{if not .ExpenseCat}}
+					<option value="{{.Name}}">{{.Name}}</option>
+				{{end}}
+			{{end}}
+		</select>
+		<br>
+  	<label>Amount</label>
+		<input name="amount" type="number" value="" required/>
+  	<br>
+  	<br>
+		<input type="submit" value=OK>
+  	<button onclick="openTab('Home')">Cancel</button>
+	</form>
+</div>
+
+<div id="Transaction" class="w3-container tab" style="display:none">
+  <h2>Transactions</h2>
+	<div class="w3-panel w3-blue w3-center">
+		<p>{{.Start.Format "Jan 02"}} - {{.End.Format "Jan 02"}}</p>
+	</div>
+	{{range .Transactions}}
+		<form action="/edit" method=post>
+			<input type="hidden" name="Date" value='{{.Date.Format "2006-01-02"}}'>
+			<input type="hidden" name="Cat" value="{{.Cat}}">
+			<input type="hidden" name="Amount" value="{{.Amount}}">
+			<input type="hidden" name="Expense" value="{{.Expense}}">
+			{{if .Expense}}
+				<button class="w3-block w3-teal w3-round-xxlarge" 
+					type="submit" >
+					{{.Date.Format "2006-01-02"}} {{.Cat}} {{.Amount}} </button>
+			{{else}}
+				<button class="w3-block w3-red w3-round-xxlarge" 
+					type="submit" >
+					{{.Date.Format "2006-01-02"}} {{.Cat}} {{.Amount}} </button>
+			{{end}}	
+		</form>  
+	{{end}}
+</div>
+
+<div id="Category" class="w3-container tab" style="display:none">
+  <h2>Category</h2>
+	<ul>
+		<li>Income</li>
+		<ul>
+			{{range .Categories}}
+				{{if not .ExpenseCat}}
+					<li>{{.Name}}</li>
+				{{end}}
+			{{end}}
+		</ul>
+		<li>Expense</li>
+		<ul>
+			{{range .Categories}}
+				{{if .ExpenseCat}}
+					<li>{{.Name}}</li>
+				{{end}}
+			{{end}}
+		</ul>
+	</ul>	
+	<button onclick="openTab('AddExpense')">New Expense</button>
+	<button onclick="openTab('AddIncome')">New Income</button>
+	</form>
+</div>
+
+<div id="AddExpense" class="w3-container tab" style="display:none">
+	<h2>Add New Expense Category</h2>
+	<form action="/newExpense" method=post>
+		Name<input name="category" type="text" value="" required/>
+		<br>
+		<input type="submit" value=OK>
+		<button onclick="openTab('Category')">Cancel</button>
+	</form>
+</div>
+
+<div id="AddIncome" class="w3-container tab" style="display:none">
+	<h2>Add New Income Category</h2>
+	<form action="/" method=post>
+		Name<input name="category" type="text" value="" required/>
+		<br>
+		<input type="submit" value=OK>
+		<button onclick="openTab('Category')">Cancel</button>
+		<input type="hidden" name="form" value="addIncome">
+	</form>
+</div>
+
+
+<div id="Settings" class="w3-modal w3-container tab" style="display:none">
+	<div class="w3-modal-content">
+		<span onclick="document.getElementByID('Settings').style.display='none'"
+			class="w3-button w3-display-topright">&times;</span>
+		<button onclick="window.locatation.href='/logout'">Logout</button>
+		<button onclick="window.location.href='/settings'">Settings</button>
+		<button onclick="window.location.href='/'>Close</button>
+	</div>
+</div>	
+{{end}}
