@@ -1,0 +1,26 @@
+{{ define "income"}}
+<div id="Income" class="w3-container tab" style="display:none">
+  <h2>Income</h2>
+  <p>Enter Income Details</p> 
+	<form action="/income" method=post>
+		<label>Date</label>
+		<input name="date" type="date" value='{{.Today.Format "2006-01-02"}}' required/>
+		<br>
+		<label>Category</label>
+		<select name="Category" size=1>
+			{{range .Categories}}
+				{{if not .ExpenseCat}}
+					<option value="{{.Name}}">{{.Name}}</option>
+				{{end}}
+			{{end}}
+		</select>
+		<br>
+  	<label>Amount</label>
+		<input name="amount" type="number" value="" required/>
+  	<br>
+  	<br>
+		<input type="submit" value=OK>
+  	<button onclick="openTab('Home')">Cancel</button>
+	</form>
+</div>
+{{end}}

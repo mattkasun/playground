@@ -1,0 +1,27 @@
+{{ define "category"}}
+
+<div id="Category" class="w3-container tab" style="display:none">
+  <h2>Category</h2>
+	<ul>
+		<li>Income</li>
+		<ul>
+			{{range .Categories}}
+				{{if not .ExpenseCat}}
+					<li>{{.Name}}</li>
+				{{end}}
+			{{end}}
+		</ul>
+		<li>Expense</li>
+		<ul>
+			{{range .Categories}}
+				{{if .ExpenseCat}}
+					<li>{{.Name}}</li>
+				{{end}}
+			{{end}}
+		</ul>
+	</ul>	
+	<button onclick="openTab('AddExpense')">New Expense</button>
+	<button onclick="openTab('AddIncome')">New Income</button>
+	</form>
+</div>
+{{end}}
