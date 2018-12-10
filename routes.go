@@ -1,17 +1,48 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/contrib/sessions"
+	"github.com/gin-gonic/gin"
+)
 
 func initializeRoutes(router *gin.Engine) {
 	//Handle main route
-	router.GET("/", displayMainPage)
-	router.POST("/back", backHandler)
-	router.POST("today", todayHandler)
-	router.POST("forward", forwardHandler)
-	router.POST("expense", expenseHandler)
-	router.POST("income", incomeHandler)
-	router.POST("newExpense", newExpenseHandler)
-	router.POST("edit", editHandler)
-	router.POST("update", updateHandler)
-	router.POST("cancel", cancelHandler)
+
+	router.POST("/login", processLogin)
+	router.GET("/logout", logout)
+	router.GET("/login", login)
+
+	private := router.Group("/", AuthRequired())
+	{
+		private.GET("/", displayMainPage)
+		private.POST("/back", backHandler)
+		private.POST("today", todayHandler)
+		private.POST("forward", forwardHandler)
+		private.POST("expense", expenseHandler)
+		private.POST("income", incomeHandler)
+		private.POST("newExpense", newExpenseHandler)
+		private.POST("edit", editHandler)
+		private.POST("update", updateHandler)
+		private.POST("cancel", cancelHandler)
+	}
+}
+
+func AuthRequired() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		log.Println("AuthRequired")
+		session := sessions.Default(c)
+		user := session.Get("user")
+		log.Println("session.Get('user') returned ", user)
+		cookie, err := c.Cookie("session-cookie")
+		log.Println("cookie is ", cookie)
+		if err != nil {
+			c.Redirect(http.StatusTemporaryRedirect, "/login")
+			c.Abort()
+		} else {
+			c.Next()
+		}
+	}
 }

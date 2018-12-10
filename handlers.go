@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -84,4 +85,37 @@ func updateHandler(c *gin.Context) {
 	updateTrans(old, new)
 	data.init(&data.Today, "Transaction")
 	c.HTML(http.StatusOK, "layout", data)
+}
+
+//loginHandler
+func login(c *gin.Context) {
+	c.HTML(http.StatusOK, "login", "")
+}
+
+func logout(c *gin.Context) {
+	session := sessions.Default(c)
+	user := session.Get("user")
+	if user == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Session Token"})
+	} else {
+		session.Delete("user")
+		session.Save()
+		c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
+	}
+}
+
+func processLogin(c *gin.Context) {
+	user := c.PostForm("user")
+	pass := c.PostForm("pass")
+	if validateUser(user, pass) {
+		log.Println("user", user, "password", pass)
+		c.SetCookie("session-cookie", "good", 4800, "/", "localhost", false, true)
+		session := sessions.Default(c)
+		session.Set("user", "hello")
+		date := time.Now()
+		data.init(&date, "Home")
+		c.HTML(http.StatusOK, "layout", data)
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
+	}
 }
