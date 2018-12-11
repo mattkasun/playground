@@ -18,20 +18,17 @@ func displayMainPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "layout", data)
 }
 
-func backHandler(c *gin.Context) {
-	date := data.Today.AddDate(0, 0, -7)
-	data.init(&date, "Home")
-	c.HTML(http.StatusOK, "layout", data)
-}
-
-func todayHandler(c *gin.Context) {
+func dateHandler(c *gin.Context) {
+	where := c.PostForm("action")
 	date := time.Now()
-	data.init(&date, "Home")
-	c.HTML(http.StatusOK, "layout", data)
-}
-
-func forwardHandler(c *gin.Context) {
-	date := data.Today.AddDate(0, 0, 7)
+	switch where {
+	case "back":
+		date = data.Today.AddDate(0, 0, -7)
+	case "today":
+		date = time.Now()
+	case "forward":
+		date = data.Today.AddDate(0, 0, 7)
+	}
 	data.init(&date, "Home")
 	c.HTML(http.StatusOK, "layout", data)
 }

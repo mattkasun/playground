@@ -18,9 +18,7 @@ func initializeRoutes(router *gin.Engine) {
 	private := router.Group("/", AuthRequired())
 	{
 		private.GET("/", displayMainPage)
-		private.POST("/back", backHandler)
-		private.POST("today", todayHandler)
-		private.POST("forward", forwardHandler)
+		private.POST("date", dateHandler)
 		private.POST("expense", expenseHandler)
 		private.POST("income", incomeHandler)
 		private.POST("newExpense", newExpenseHandler)
