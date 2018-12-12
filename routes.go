@@ -19,8 +19,8 @@ func initializeRoutes(router *gin.Engine) {
 	{
 		private.GET("/", displayMainPage)
 		private.POST("date", dateHandler)
-		private.POST("expense", expenseHandler)
-		private.POST("income", incomeHandler)
+		private.POST("expense", transactionHandler)
+		private.POST("income", transactionHandler)
 		private.POST("newExpense", newExpenseHandler)
 		private.POST("edit", editHandler)
 		private.POST("update", updateHandler)

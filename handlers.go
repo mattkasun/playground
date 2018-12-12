@@ -33,9 +33,18 @@ func dateHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "layout", data)
 }
 
-func expenseHandler(c *gin.Context) {
-	commitTrans(c, true)
-	data.init(&data.Today, "Home")
+func transactionHandler(c *gin.Context) {
+	action := c.PostForm("action")
+	date, err := time.Parse("2006-01-02", c.PostForm("date"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	if action == "expense" {
+		commitTrans(c, true)
+	} else {
+		commitTrans(c, false)
+	}
+	data.init(&date, "Home")
 	c.HTML(http.StatusOK, "layout", data)
 }
 
