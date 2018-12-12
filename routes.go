@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gin-gonic/contrib/sessions"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,14 +31,14 @@ func initializeRoutes(router *gin.Engine) {
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		log.Println("AuthRequired")
+
 		session := sessions.Default(c)
-		user := session.Get("user")
-		log.Println("session.Get('user') returned ", user)
-		cookie, err := c.Cookie("session-cookie")
-		log.Println("cookie is ", cookie)
-		if err != nil {
+		state := session.Get("state")
+		log.Println(state, session)
+		user := session.Get("count")
+		log.Println("session.Get('count') returned ", user)
+		if user == nil {
 			c.Redirect(http.StatusTemporaryRedirect, "/login")
-			c.Abort()
 		} else {
 			c.Next()
 		}

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gin-gonic/contrib/sessions"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -102,17 +102,22 @@ func logout(c *gin.Context) {
 }
 
 func processLogin(c *gin.Context) {
+	session := sessions.Default(c)
 	user := c.PostForm("user")
 	pass := c.PostForm("pass")
 	if validateUser(user, pass) {
 		log.Println("user", user, "password", pass)
-		c.SetCookie("session-cookie", "good", 4800, "/", "localhost", false, true)
-		session := sessions.Default(c)
+		//c.SetCookie("session-cookie", "good", 4800, "/", "localhost", false, true)
 		session.Set("user", "hello")
-		date := time.Now()
-		data.init(&date, "Home")
-		c.HTML(http.StatusOK, "layout", data)
+		err := session.Save()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Session Token Failure"})
+		} else {
+			date := time.Now()
+			data.init(&date, "Home")
+			c.HTML(http.StatusOK, "layout", data)
+		}
 	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication Failed"})
 	}
 }
