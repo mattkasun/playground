@@ -109,7 +109,7 @@ func processLogin(c *gin.Context) {
 	pass := c.PostForm("pass")
 	if validateUser(user, pass) {
 		log.Println("user", user, "password", pass)
-		c.SetCookie("spend", "alldjhaeisislsj", 0, "/", "localhost", false, true)
+		c.SetCookie("spend", "alldjhaeisislsj", 0, "/", "nusak.ca", false, true)
 		date := time.Now()
 		data.init(&date, "Home")
 		c.HTML(http.StatusOK, "layout", data)
