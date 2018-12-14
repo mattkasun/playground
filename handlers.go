@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -48,15 +47,19 @@ func transactionHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "layout", data)
 }
 
-func incomeHandler(c *gin.Context) {
-	commitTrans(c, false)
-	data.init(&data.Today, "Home")
-	c.HTML(http.StatusOK, "layout", data)
-}
-
-func newExpenseHandler(c *gin.Context) {
-	addCategory(c, true)
-	data.init(&data.Today, "Expense")
+func newCategoryHandler(c *gin.Context) {
+	date, err := time.Parse("2006-01-02", c.PostForm("date"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	action := c.PostForm("action")
+	if action == "expense" {
+		addCategory(c, true)
+		data.init(&date, "Expense")
+	} else {
+		addCategory(c, false)
+		data.init(&date, "Income")
+	}
 	c.HTML(http.StatusOK, "layout", data)
 }
 
@@ -89,7 +92,7 @@ func updateHandler(c *gin.Context) {
 	cat = c.PostForm("Category")
 	new := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
 	updateTrans(old, new)
-	data.init(&data.Today, "Transaction")
+	data.init(&date, "Transaction")
 	c.HTML(http.StatusOK, "layout", data)
 }
 
@@ -99,33 +102,19 @@ func login(c *gin.Context) {
 }
 
 func logout(c *gin.Context) {
-	session := sessions.Default(c)
-	user := session.Get("user")
-	if user == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Session Token"})
-	} else {
-		session.Delete("user")
-		session.Save()
-		c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
-	}
+	c.SetCookie("spend", "", -1, "/", "localhost", false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
 }
 
 func processLogin(c *gin.Context) {
-	session := sessions.Default(c)
 	user := c.PostForm("user")
 	pass := c.PostForm("pass")
 	if validateUser(user, pass) {
 		log.Println("user", user, "password", pass)
-		//c.SetCookie("session-cookie", "good", 4800, "/", "localhost", false, true)
-		session.Set("user", "hello")
-		err := session.Save()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Session Token Failure"})
-		} else {
-			date := time.Now()
-			data.init(&date, "Home")
-			c.HTML(http.StatusOK, "layout", data)
-		}
+		c.SetCookie("spend", "alldjhaeisislsj", 0, "/", "localhost", false, true)
+		date := time.Now()
+		data.init(&date, "Home")
+		c.HTML(http.StatusOK, "layout", data)
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication Failed"})
 	}
