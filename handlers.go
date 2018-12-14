@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -13,7 +12,6 @@ import (
 func displayMainPage(c *gin.Context) {
 	date := time.Now()
 	data.init(&date, "Home")
-	fmt.Println(data)
 	c.HTML(http.StatusOK, "layout", data)
 }
 
