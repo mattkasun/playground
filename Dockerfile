@@ -1,5 +1,7 @@
 FROM golang:latest as builder
 WORKDIR /go/src/github.com/mattkasun/playground
+RUN go get github.com/gin-gonic/gin
+
 COPY *.go ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix temp -ldflags '-extldflags "-static"' .
 

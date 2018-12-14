@@ -3,6 +3,13 @@
   <button class="w3-bar-item w3-button" onclick="openTab('Home')">Home</button>
   <button class="w3-bar-item w3-button" onclick="openTab('Transaction')">Transaction</button>
   <button class="w3-bar-item w3-button" onclick="openTab('Category')">Category</button>
-  <button class="w3-bar-item w3-button w3-right" onclick="openPopUp('Edit')">...</button>
+  <div class="w3-dropdown-hover w3-right">
+    <button class="w2-bar-item w3-button ">... </button>
+    <div class="w3-dropdown-content w3-bar-block w3-teal w3-card-4"
+      style="right:0">
+      <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+      <a href="/settings" class="w3-bar-item w3-button">Settings</a>
+    </div>
+  </div>
 </div>
 {{end}}

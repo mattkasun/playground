@@ -1,0 +1,18 @@
+{{define "login"}}
+<!doctype html>
+<head>
+<Title>Login</Title>
+<head>
+<body>
+<div>
+  <form action="/auth" method=POST>
+    UserName
+    <input type=text name="user" value="" required/>
+    <br>Password
+    <input type=password name="pass" value="" required/>
+    <br><input type=submit value="OK" />
+  </form>
+</div>
+</body>
+</html>
+{{end}}

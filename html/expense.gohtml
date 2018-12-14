@@ -1,0 +1,22 @@
+{{ define "expense"}}
+<div id="Expense" class="w3-container tab" style="display:none">
+  <h2>Expense</h2>
+  <p>Enter Expense Details</p>
+	<form action="/expense" method=post>
+  Date <input name="date" type="date" value='{{.Today.Format "2006-01-02"}}' required/>
+	<br>
+	Category
+	<select name="Category" size=1 >
+		{{range .Categories}}
+			{{if .ExpenseCat }}
+				<option value="{{.Name}}">{{.Name}}</option>
+			{{end}}
+		{{end}}
+	</select><br>
+  Amount
+	<input name="amount" type="number" value="" required/><br><br>
+	<button type="submit" name="action" value="expense">OK</button>
+  <button onclick="openTab('Home')">Cancel</button>
+	</form>
+</div>
+{{end}}

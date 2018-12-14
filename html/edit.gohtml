@@ -1,4 +1,4 @@
-{{define "layout"}}
+{{define "edit"}}
 
 <html>
 <head>
@@ -12,7 +12,7 @@
 <body>
 <div id="Edit" class="w3-container tab">
   <h2>Edit Transaction</h2>
-  <form action="/" method=post>
+  <form action="/update" method=post>
     Date
     <input name="date" type="date" value='{{.Old.Date.Format "2006-01-02"}}'/>
     <input type="hidden" name="OldDate" value='{{.Old.Date.Format "2006-01-02"}}'/>
@@ -46,13 +46,8 @@
     <br>
     <input type="submit" value=Update>
     <input type="reset">
-    <input type="hidden" name="form" value="update"/>
   </form>
-  <form method=post>
-    <input type="submit" value=Cancel>
-    <input type="hidden" name="form" value="cancel"/>
-  </form>
-
+  <button onclick="window.location.href='/'">Cancel</button>
 </body>
 </html>
 {{end}}

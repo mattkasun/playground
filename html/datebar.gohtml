@@ -1,0 +1,13 @@
+	{{ define "datebar" }}
+  <div class="w3-bar w3-blue">
+		<form action="/date" method=post>
+			<button class="w3-bar-item w3-circle w3-black" type="submit"
+				name="action" value="back">&lt;</button>
+			<button class="w3-bar-item w3-teal" type="submit"
+				name="action" value="today">
+				{{.Start.Format "Jan 02"}} - {{.End.Format "Jan 02"}}</button>
+			<button class="w3-bar-item w3-circle w3-red" type="submit"
+				name="action" value="forward">&gt;</button>
+		</form>
+	</div>
+  {{ end }}

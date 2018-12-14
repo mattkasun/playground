@@ -1,17 +1,14 @@
 {{ define "content"}}
 <div id="Home" class="w3-container tab">
 	<div class="w3-bar w3-blue">
-		<form action="/" method=post>
+		<form action="/back" method=post>
 			<button class="w3-bar-item w3-circle w3-black" type="submit"><</button>
-			<input type="hidden" name="form" value="back">
 		</form>
-		<form action="/" method=post>
+		<form action="/today" method=post>
 			<button class="w3-bar-item w3-teal" type="submit">{{.Start.Format "Jan 02"}} - {{.End.Format "Jan 02"}}</button>
-			<input type="hidden" name="form" value="today">
 		</form>
-		<form action="/" method=post>
+		<form action="/forward" method=post>
 			<button class="w3-bar-item w3-circle w3-red" type="submit">></button>
-			<input type="hidden" name="form" value="forward">
 		</form>
 	</div>
 	<ul>
@@ -36,7 +33,7 @@
 <div id="Expense" class="w3-container tab" style="display:none">
   <h2>Expense</h2>
   <p>Enter Expense Details</p>
-	<form action="/" method=post>
+	<form action="/expense" method=post>
   Date <input name="date" type="date" value='{{.Today.Format "2006-01-02"}}' required/>
 	<br>
 	Category
@@ -51,14 +48,13 @@
 	<input name="amount" type="number" value="" required/><br><br>
 	<input type="submit" value=OK>
   <button onclick="openTab('Home')">Cancel</button>
-	<input type="hidden" name="form" value="expense">
 	</form>
 </div>
 
 <div id="Income" class="w3-container tab" style="display:none">
   <h2>Income</h2>
   <p>Enter Income Details</p> 
-	<form action="/" method=post>
+	<form action="/income" method=post>
 		<label>Date</label>
 		<input name="date" type="date" value='{{.Today.Format "2006-01-02"}}' required/>
 		<br>
@@ -77,7 +73,6 @@
   	<br>
 		<input type="submit" value=OK>
   	<button onclick="openTab('Home')">Cancel</button>
-		<input type="hidden" name="form" value="income">
 	</form>
 </div>
 
@@ -87,7 +82,7 @@
 		<p>{{.Start.Format "Jan 02"}} - {{.End.Format "Jan 02"}}</p>
 	</div>
 	{{range .Transactions}}
-		<form action="/" method=post>
+		<form action="/edit" method=post>
 			<input type="hidden" name="Date" value='{{.Date.Format "2006-01-02"}}'>
 			<input type="hidden" name="Cat" value="{{.Cat}}">
 			<input type="hidden" name="Amount" value="{{.Amount}}">
@@ -101,7 +96,6 @@
 					type="submit" >
 					{{.Date.Format "2006-01-02"}} {{.Cat}} {{.Amount}} </button>
 			{{end}}	
-			<input type="hidden" name="form" value="edit">
 		</form>  
 	{{end}}
 </div>
@@ -133,12 +127,11 @@
 
 <div id="AddExpense" class="w3-container tab" style="display:none">
 	<h2>Add New Expense Category</h2>
-	<form action="/" method=post>
+	<form action="/newExpense" method=post>
 		Name<input name="category" type="text" value="" required/>
 		<br>
 		<input type="submit" value=OK>
 		<button onclick="openTab('Category')">Cancel</button>
-		<input type="hidden" name="form" value="addExpense">
 	</form>
 </div>
 
@@ -152,4 +145,15 @@
 		<input type="hidden" name="form" value="addIncome">
 	</form>
 </div>
+
+
+<div id="Settings" class="w3-modal w3-container tab" style="display:none">
+	<div class="w3-modal-content">
+		<span onclick="document.getElementByID('Settings').style.display='none'"
+			class="w3-button w3-display-topright">&times;</span>
+		<button onclick="window.locatation.href='/logout'">Logout</button>
+		<button onclick="window.location.href='/settings'">Settings</button>
+		<button onclick="window.location.href='/'>Close</button>
+	</div>
+</div>	
 {{end}}
