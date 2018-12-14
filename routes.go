@@ -32,7 +32,8 @@ func authRequired() gin.HandlerFunc {
 		cookie, err := c.Cookie("spend")
 		if err != nil || cookie != "alldjhaeisislsj" {
 			log.Println("unauthorized access, redirect to login")
-			c.Redirect(http.StatusTemporaryRedirect, "/login")
+			c.Redirect(http.StatusFound, "/login")
+			c.Abort()
 		} else {
 			log.Println("authorized access, continuing...")
 			c.Next()
