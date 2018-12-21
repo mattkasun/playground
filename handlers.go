@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/dchest/uniuri"
 	"github.com/gin-gonic/gin"
+	"github.com/gomodule/redigo/redis"
 )
 
 func displayMainPage(c *gin.Context) {
@@ -105,15 +108,32 @@ func logout(c *gin.Context) {
 }
 
 func processLogin(c *gin.Context) {
-	user := c.PostForm("user")
-	pass := c.PostForm("pass")
-	if validateUser(user, pass) {
-		log.Println("user", user, "password", pass)
-		c.SetCookie("spend", "alldjhaeisislsj", 0, "/", "", false, true)
+	connection, ok := c.MustGet("redis").(redis.Conn)
+	if !ok {
+		panic("invalid db connection")
+	}
+	username := c.PostForm("user")
+	password := c.PostForm("pass")
+	userid, err := redis.Int(connection.Do("HGET", "users", username))
+	if err != nil {
+		panic(err)
+	}
+	key := fmt.Sprintf("user:%d", userid)
+	pass, err := redis.String(connection.Do("HGET", key, "password"))
+	if err != nil {
+		panic(err)
+	}
+	if password == pass {
+		log.Println("user ", username, " logged in")
+		s := uniuri.New()
+		connection.Do("HSET", key, "cookie", s)
+		connection.Do("HSET", "auths", s, userid)
+		c.SetCookie("spend", s, 604800, "/", "", false, true)
 		date := time.Now()
 		data.init(&date, "Home")
 		c.HTML(http.StatusOK, "layout", data)
 	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication Failed"})
+		log.Println("invalid login")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Login"})
 	}
 }
