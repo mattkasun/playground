@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -16,7 +15,6 @@ func (data *PageData) init(date *time.Time, page string) {
 	transactions := readTrans()
 	data.Categories = readCat()
 	balance(data, transactions)
-	fmt.Println(data)
 }
 
 func week(date time.Time) (time.Time, time.Time) {
@@ -25,8 +23,6 @@ func week(date time.Time) (time.Time, time.Time) {
 
 	//date := time.Date(2010, 12, 2, 12, 30, 0, 0, time.UTC)
 	day := date.Weekday()
-	year, week := date.ISOWeek()
-	fmt.Println(date, day, week, year)
 	switch day {
 	case 0:
 		start = date.AddDate(0, 0, -6)
@@ -49,8 +45,6 @@ func week(date time.Time) (time.Time, time.Time) {
 	case 6:
 		start = date.AddDate(0, 0, -5)
 		end = date.AddDate(0, 0, 1)
-	default:
-		fmt.Println("switch not working")
 	}
 	return start, end
 }

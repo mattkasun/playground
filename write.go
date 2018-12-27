@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -52,19 +51,16 @@ func writeAll(transactions []Transaction) {
 	if err != nil {
 		log.Fatal("error opening file", err)
 	}
-	total := 0
 	for i := range transactions {
 		b, err := json.Marshal(transactions[i])
 		if err != nil {
 			log.Fatal("encoding error: ", err)
 		}
-		n, err := f.Write(b)
+		_, err = f.Write(b)
 		if err != nil {
 			log.Fatal("write err:", err)
 		}
-		total = total + n
 	}
-	fmt.Println("wrote ", total, " bytes")
 }
 func writeOne(t Transaction) {
 	f, err := os.OpenFile("data/trans.data", os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
@@ -76,12 +72,11 @@ func writeOne(t Transaction) {
 	if err != nil {
 		log.Fatal("encoding err", err)
 	}
-	n, err := f.Write(b)
+	_, err = f.Write(b)
 	if err != nil {
 		log.Fatal("write error", err)
 	}
 
-	fmt.Println("wrote ", n, " bytes")
 }
 
 func addCategory(c *gin.Context, expense bool) {

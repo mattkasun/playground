@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"reflect"
@@ -24,7 +23,6 @@ func updateTrans(old, new Transaction) {
 			log.Fatal("decoding transaction", err)
 		}
 		if reflect.DeepEqual(transaction, old) {
-			fmt.Println("updating transacation: \n", old, "\n", new)
 			transactions = append(transactions, new)
 			//found it, don't change any more
 			old = Transaction{}
