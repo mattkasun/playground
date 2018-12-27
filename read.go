@@ -76,11 +76,29 @@ func readCat() []Category {
 	return categories
 }
 
-func validateUser(u, p string) bool {
-	type User struct {
-		Name string
-		Pass string
+func validateCookie(c string) bool {
+	f, err := os.Open("data/user.data")
+	defer f.Close()
+	if err != nil {
+		log.Fatal("uable to open user file", err)
 	}
+	decoder := json.NewDecoder(f)
+	for decoder.More() {
+		var user User
+		err = decoder.Decode(&user)
+		if err != nil {
+			log.Println("decoding failure")
+			return false
+		}
+		if user.Cookie == c {
+			return true
+		}
+	}
+	log.Println("no such cookie")
+	return false
+}
+
+func validateUser(u, p string) bool {
 	f, err := os.Open("data/user.data")
 	defer f.Close()
 	if err != nil {
@@ -91,11 +109,12 @@ func validateUser(u, p string) bool {
 		var user User
 
 		err = decoder.Decode(&user)
+		log.Println("checking user:", user)
 		if err != nil {
 			log.Println("decoding failure")
 			return false
 		}
-		if user.Name == u && user.Pass == p {
+		if user.UserName == u && user.Password == p {
 			return true
 		}
 	}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -9,7 +8,6 @@ import (
 
 	"github.com/dchest/uniuri"
 	"github.com/gin-gonic/gin"
-	"github.com/gomodule/redigo/redis"
 )
 
 func displayMainPage(c *gin.Context) {
@@ -37,7 +35,7 @@ func transactionHandler(c *gin.Context) {
 	action := c.PostForm("action")
 	date, err := time.Parse("2006-01-02", c.PostForm("date"))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("transaction handler", err)
 	}
 	if action == "expense" {
 		commitTrans(c, true)
@@ -49,10 +47,7 @@ func transactionHandler(c *gin.Context) {
 }
 
 func newCategoryHandler(c *gin.Context) {
-	date, err := time.Parse("2006-01-02", c.PostForm("date"))
-	if err != nil {
-		log.Fatal(err)
-	}
+	date := time.Now()
 	action := c.PostForm("action")
 	if action == "expense" {
 		addCategory(c, true)
@@ -98,42 +93,35 @@ func updateHandler(c *gin.Context) {
 }
 
 //loginHandler
-func login(c *gin.Context) {
+func displayLogin(c *gin.Context) {
 	c.HTML(http.StatusOK, "login", "")
 }
 
 func logout(c *gin.Context) {
 	c.SetCookie("spend", "", -1, "/", "localhost", false, true)
+	user := c.MustGet("user").(string)
+	writeCookie(user, "", time.Now().Add(time.Hour*7*24))
+	c.Set("user", "")
+
 	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
 }
 
 func processLogin(c *gin.Context) {
-	connection, ok := c.MustGet("redis").(redis.Conn)
-	if !ok {
-		panic("invalid db connection")
-	}
 	username := c.PostForm("user")
 	password := c.PostForm("pass")
-	userid, err := redis.Int(connection.Do("HGET", "users", username))
-	if err != nil {
-		panic(err)
-	}
-	key := fmt.Sprintf("user:%d", userid)
-	pass, err := redis.String(connection.Do("HGET", key, "password"))
-	if err != nil {
-		panic(err)
-	}
-	if password == pass {
+	if validateUser(username, password) {
 		log.Println("user ", username, " logged in")
 		s := uniuri.New()
-		connection.Do("HSET", key, "cookie", s)
-		connection.Do("HSET", "auths", s, userid)
 		c.SetCookie("spend", s, 604800, "/", "", false, true)
+		c.Set("user", username)
+		writeCookie(username, s, time.Now().Add(time.Hour*7*24))
+
 		date := time.Now()
 		data.init(&date, "Home")
 		c.HTML(http.StatusOK, "layout", data)
 	} else {
 		log.Println("invalid login")
+		c.Set("user", "")
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Login"})
 	}
 }

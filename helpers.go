@@ -16,6 +16,7 @@ func (data *PageData) init(date *time.Time, page string) {
 	transactions := readTrans()
 	data.Categories = readCat()
 	balance(data, transactions)
+	fmt.Println(data)
 }
 
 func week(date time.Time) (time.Time, time.Time) {
@@ -56,6 +57,7 @@ func week(date time.Time) (time.Time, time.Time) {
 
 func balance(data *PageData, transactions []Transaction) {
 	var expenses []Expense
+	var incomes []Expense
 	balance := 0
 	expense := 0
 	income := 0
@@ -91,6 +93,21 @@ func balance(data *PageData, transactions []Transaction) {
 				balance = balance - transactions[i].Amount
 				expense = expense + transactions[i].Amount
 			} else {
+				if len(incomes) == 0 {
+					incomes = append(incomes, Expense{Cat: transactions[i].Cat, Amount: transactions[i].Amount})
+				} else {
+					foundata := false
+					for j := range incomes {
+						if incomes[j].Cat == transactions[i].Cat {
+							incomes[j].Amount = incomes[j].Amount + transactions[i].Amount
+							foundata = true
+						}
+					}
+					if foundata == false {
+						incomes = append(incomes, Expense{Cat: transactions[i].Cat, Amount: transactions[i].Amount})
+					}
+				}
+
 				balance = balance + transactions[i].Amount
 				income = income + transactions[i].Amount
 			}
@@ -109,6 +126,7 @@ func balance(data *PageData, transactions []Transaction) {
 	data.ExpenseTotal = expense
 	data.Balance = balance
 	data.Expenses = expenses
+	data.Incomes = incomes
 	data.CarryOver = carryover
 }
 

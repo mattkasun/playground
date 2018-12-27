@@ -5,9 +5,45 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
+
+func writeCookie(u, c string, valid time.Time) {
+	f, err := os.OpenFile("data/user.data", os.O_RDWR, 0644)
+	defer f.Close()
+	if err != nil {
+		log.Fatal("error opening file", err)
+	}
+	decoder := json.NewDecoder(f)
+	//get all users
+	var users []User
+	for decoder.More() {
+		var user User
+		err = decoder.Decode(&user)
+		if err != nil {
+			log.Println("decoding error")
+			break
+		}
+		users = append(users, user)
+	}
+	//find user whose cookie is to be updated
+	for _, x := range users {
+		if x.UserName == u {
+			x.Cookie = c
+			x.ValidTo = valid
+		}
+		b, err := json.Marshal(x)
+		if err != nil {
+			log.Fatal("error encoding user", err)
+		}
+		_, err = f.Write(b)
+		if err != nil {
+			log.Fatal("error writing to user file ", err)
+		}
+	}
+}
 
 func writeAll(transactions []Transaction) {
 
