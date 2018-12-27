@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gomodule/redigo/redis"
 )
 
 var data PageData
@@ -13,8 +14,13 @@ func main() {
 	//process templates
 	router.LoadHTMLGlob("html/*")
 
+	//Redis Connection
+	connection, err := redis.DialURL("redis://localhost")
+	if err != nil {
+		panic(err)
+	}
 	//Initialize routes
-	initializeRoutes(router)
+	initializeRoutes(router, connection)
 
 	//serve the app
 	router.Run()
