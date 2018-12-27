@@ -2,3 +2,4 @@
 *.*~
 *.bak
 /not_used/
+.vscode/launch.json
