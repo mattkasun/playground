@@ -96,7 +96,7 @@ func validateCookie(c string) bool {
 	return false
 }
 
-func validateUser(u, p string) bool {
+func validateUser(u, p string) (bool, User) {
 	f, err := os.Open("data/user.data")
 	defer f.Close()
 	if err != nil {
@@ -105,17 +105,16 @@ func validateUser(u, p string) bool {
 	decoder := json.NewDecoder(f)
 	for decoder.More() {
 		var user User
-
 		err = decoder.Decode(&user)
 		log.Println("checking user:", user)
 		if err != nil {
 			log.Println("decoding failure")
-			return false
+			return false, User{}
 		}
 		if user.UserName == u && user.Password == p {
-			return true
+			return true, user
 		}
 	}
 	log.Println("no such user", u, p)
-	return false
+	return false, User{}
 }

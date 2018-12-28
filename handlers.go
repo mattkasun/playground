@@ -99,29 +99,29 @@ func displayLogin(c *gin.Context) {
 
 func logout(c *gin.Context) {
 	c.SetCookie("spend", "", -1, "/", "localhost", false, true)
-	user := c.MustGet("user").(string)
-	writeCookie(user, "", time.Now().Add(time.Hour*7*24))
-	c.Set("user", "")
-
 	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
 }
 
 func processLogin(c *gin.Context) {
 	username := c.PostForm("user")
 	password := c.PostForm("pass")
-	if validateUser(username, password) {
+	valid, user := validateUser(username, password)
+	if valid {
 		log.Println("user ", username, " logged in")
-		s := uniuri.New()
-		c.SetCookie("spend", s, 604800, "/", "", false, true)
-		c.Set("user", username)
-		writeCookie(username, s, time.Now().Add(time.Hour*7*24))
-
+		//is saved cookie still valid
+		if user.ValidTo.After(time.Now()) {
+			c.SetCookie("spend", user.Cookie, 604800, "/", "", false, true)
+			//set new cookie
+		} else {
+			s := uniuri.New()
+			c.SetCookie("spend", s, 604800, "/", "", false, true)
+			writeCookie(username, s, time.Now().Add(time.Hour*7*24))
+		}
 		date := time.Now()
 		data.init(&date, "Home")
 		c.HTML(http.StatusOK, "layout", data)
 	} else {
 		log.Println("invalid login")
-		c.Set("user", "")
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Login"})
 	}
 }

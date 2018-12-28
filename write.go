@@ -25,15 +25,18 @@ func writeCookie(u, c string, valid time.Time) {
 			log.Println("decoding error")
 			break
 		}
+		//find user whose cookie is to be updated
+		if user.UserName == u {
+			user.Cookie = c
+			user.ValidTo = valid
+		}
 		users = append(users, user)
 	}
-	//find user whose cookie is to be updated
-	for _, x := range users {
-		if x.UserName == u {
-			x.Cookie = c
-			x.ValidTo = valid
-		}
-		b, err := json.Marshal(x)
+	//clear file
+	f.Truncate(0)
+	f.Seek(0, 0)
+	for i := range users {
+		b, err := json.Marshal(users[i])
 		if err != nil {
 			log.Fatal("error encoding user", err)
 		}
