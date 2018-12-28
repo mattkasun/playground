@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -24,8 +23,6 @@ func week(date time.Time) (time.Time, time.Time) {
 
 	//date := time.Date(2010, 12, 2, 12, 30, 0, 0, time.UTC)
 	day := date.Weekday()
-	year, week := date.ISOWeek()
-	fmt.Println(date, day, week, year)
 	switch day {
 	case 0:
 		start = date.AddDate(0, 0, -6)
@@ -48,14 +45,13 @@ func week(date time.Time) (time.Time, time.Time) {
 	case 6:
 		start = date.AddDate(0, 0, -5)
 		end = date.AddDate(0, 0, 1)
-	default:
-		fmt.Println("switch not working")
 	}
 	return start, end
 }
 
 func balance(data *PageData, transactions []Transaction) {
 	var expenses []Expense
+	var incomes []Expense
 	balance := 0
 	expense := 0
 	income := 0
@@ -91,6 +87,21 @@ func balance(data *PageData, transactions []Transaction) {
 				balance = balance - transactions[i].Amount
 				expense = expense + transactions[i].Amount
 			} else {
+				if len(incomes) == 0 {
+					incomes = append(incomes, Expense{Cat: transactions[i].Cat, Amount: transactions[i].Amount})
+				} else {
+					foundata := false
+					for j := range incomes {
+						if incomes[j].Cat == transactions[i].Cat {
+							incomes[j].Amount = incomes[j].Amount + transactions[i].Amount
+							foundata = true
+						}
+					}
+					if foundata == false {
+						incomes = append(incomes, Expense{Cat: transactions[i].Cat, Amount: transactions[i].Amount})
+					}
+				}
+
 				balance = balance + transactions[i].Amount
 				income = income + transactions[i].Amount
 			}
@@ -109,6 +120,7 @@ func balance(data *PageData, transactions []Transaction) {
 	data.ExpenseTotal = expense
 	data.Balance = balance
 	data.Expenses = expenses
+	data.Incomes = incomes
 	data.CarryOver = carryover
 }
 

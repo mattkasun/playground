@@ -3,6 +3,11 @@
 	{{ template "datebar" . }}
 	<ul>
 		<li>Income ${{.Income}}</li>
+		<ul>
+			{{range .Incomes}}
+				<li>{{.Cat}} ${{.Amount}}</li>
+			{{end}}
+		</ul>
 		<li>Expense ${{.ExpenseTotal}}</li>
 		<ul>
 			{{range .Expenses}}

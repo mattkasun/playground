@@ -2,17 +2,16 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func initializeRoutes(router *gin.Engine) {
-	//Handle main route
+	//Handle main routed
 
 	router.POST("/auth", processLogin)
 	router.GET("/logout", logout)
-	router.GET("/login", login)
+	router.GET("/login", displayLogin)
 
 	private := router.Group("/", authRequired())
 	{
@@ -29,14 +28,21 @@ func initializeRoutes(router *gin.Engine) {
 func authRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		log.Println("AuthRequired")
+
 		cookie, err := c.Cookie("spend")
-		if err != nil || cookie != "alldjhaeisislsj" {
+		if err != nil {
 			log.Println("unauthorized access, redirect to login")
-			c.Redirect(http.StatusFound, "/login")
+			displayLogin(c)
 			c.Abort()
-		} else {
-			log.Println("authorized access, continuing...")
+			return
+		}
+
+		if validateCookie(cookie) {
+			log.Println("authorized access, continuing ....")
 			c.Next()
+		} else {
+			displayLogin(c)
+			c.Abort()
 		}
 	}
 }

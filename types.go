@@ -32,6 +32,7 @@ type PageData struct {
 	ExpenseTotal int
 	Balance      int
 	Expenses     []Expense
+	Incomes      []Expense
 	Categories   []Category
 	Transactions []Transaction
 	Transaction  Transaction
@@ -42,4 +43,13 @@ type PageData struct {
 type EditData struct {
 	Old        Transaction
 	Categories []Category
+}
+
+//User - structure for user data
+type User struct {
+	ID       int
+	UserName string
+	Password string
+	Cookie   string
+	ValidTo  time.Time
 }

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/dchest/uniuri"
 	"github.com/gin-gonic/gin"
 )
 
@@ -34,7 +35,7 @@ func transactionHandler(c *gin.Context) {
 	action := c.PostForm("action")
 	date, err := time.Parse("2006-01-02", c.PostForm("date"))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("transaction handler", err)
 	}
 	if action == "expense" {
 		commitTrans(c, true)
@@ -46,10 +47,7 @@ func transactionHandler(c *gin.Context) {
 }
 
 func newCategoryHandler(c *gin.Context) {
-	date, err := time.Parse("2006-01-02", c.PostForm("date"))
-	if err != nil {
-		log.Fatal(err)
-	}
+	date := time.Now()
 	action := c.PostForm("action")
 	if action == "expense" {
 		addCategory(c, true)
@@ -95,7 +93,7 @@ func updateHandler(c *gin.Context) {
 }
 
 //loginHandler
-func login(c *gin.Context) {
+func displayLogin(c *gin.Context) {
 	c.HTML(http.StatusOK, "login", "")
 }
 
@@ -105,15 +103,25 @@ func logout(c *gin.Context) {
 }
 
 func processLogin(c *gin.Context) {
-	user := c.PostForm("user")
-	pass := c.PostForm("pass")
-	if validateUser(user, pass) {
-		log.Println("user", user, "password", pass)
-		c.SetCookie("spend", "alldjhaeisislsj", 0, "/", "", false, true)
+	username := c.PostForm("user")
+	password := c.PostForm("pass")
+	valid, user := validateUser(username, password)
+	if valid {
+		log.Println("user ", username, " logged in")
+		//is saved cookie still valid
+		if user.ValidTo.After(time.Now()) {
+			c.SetCookie("spend", user.Cookie, 604800, "/", "", false, true)
+			//set new cookie
+		} else {
+			s := uniuri.New()
+			c.SetCookie("spend", s, 604800, "/", "", false, true)
+			writeCookie(username, s, time.Now().Add(time.Hour*7*24))
+		}
 		date := time.Now()
 		data.init(&date, "Home")
 		c.HTML(http.StatusOK, "layout", data)
 	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication Failed"})
+		log.Println("invalid login")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Login"})
 	}
 }

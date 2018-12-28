@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"reflect"
@@ -24,7 +23,6 @@ func updateTrans(old, new Transaction) {
 			log.Fatal("decoding transaction", err)
 		}
 		if reflect.DeepEqual(transaction, old) {
-			fmt.Println("updating transacation: \n", old, "\n", new)
 			transactions = append(transactions, new)
 			//found it, don't change any more
 			old = Transaction{}
@@ -76,11 +74,29 @@ func readCat() []Category {
 	return categories
 }
 
-func validateUser(u, p string) bool {
-	type User struct {
-		Name string
-		Pass string
+func validateCookie(c string) bool {
+	f, err := os.Open("data/user.data")
+	defer f.Close()
+	if err != nil {
+		log.Fatal("uable to open user file", err)
 	}
+	decoder := json.NewDecoder(f)
+	for decoder.More() {
+		var user User
+		err = decoder.Decode(&user)
+		if err != nil {
+			log.Println("decoding failure")
+			return false
+		}
+		if user.Cookie == c {
+			return true
+		}
+	}
+	log.Println("no such cookie")
+	return false
+}
+
+func validateUser(u, p string) (bool, User) {
 	f, err := os.Open("data/user.data")
 	defer f.Close()
 	if err != nil {
@@ -89,16 +105,16 @@ func validateUser(u, p string) bool {
 	decoder := json.NewDecoder(f)
 	for decoder.More() {
 		var user User
-
 		err = decoder.Decode(&user)
+		log.Println("checking user:", user)
 		if err != nil {
 			log.Println("decoding failure")
-			return false
+			return false, User{}
 		}
-		if user.Name == u && user.Pass == p {
-			return true
+		if user.UserName == u && user.Password == p {
+			return true, user
 		}
 	}
 	log.Println("no such user", u, p)
-	return false
+	return false, User{}
 }
