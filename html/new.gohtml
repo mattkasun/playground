@@ -1,4 +1,4 @@
-{{define "login"}}
+{{define "new"}}
 <!doctype html>
 <head>
   <Title>Login</Title>
@@ -79,13 +79,15 @@ after { clear: both; }
 </style>
 <head>
 <body>
+<H1>Welcome to Spending Tracker</H1>
+<p>Create a new user<p>
 <div id="login">
-  <form action="/auth" method=POST name="form-login">
+  <form action="/newuser" method=POST name="form-login">
     <span class="fas fa-user"></span>
     <input type=text name="user" autocomplete="Username" required/>
     <span class="fas fa-lock"><span>
     <input type=password name="pass" autocomplete="Password" required/>
-    <input type=submit value="Login" />
+    <input type=submit value="Create" />
   </form>
 </div>
 </body>

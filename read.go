@@ -78,7 +78,8 @@ func validateCookie(c string) bool {
 	f, err := os.Open("data/user.data")
 	defer f.Close()
 	if err != nil {
-		log.Fatal("uable to open user file", err)
+		log.Println("uable to open user file", err)
+		return false
 	}
 	decoder := json.NewDecoder(f)
 	for decoder.More() {
