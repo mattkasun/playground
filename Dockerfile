@@ -10,7 +10,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix temp -ldflags '-extldfla
 FROM busybox
 WORKDIR /root/
 COPY --from=builder /go/src/github.com/mattkasun/playground/playground .
+ADD /resources/* resources/
+ADD /stylesheet/* stylesheet/
 ADD /html/*gohtml html/
-ADD /data/*data data/
 CMD ["./playground"]
 
