@@ -11,7 +11,9 @@ FROM busybox
 WORKDIR /root/
 COPY --from=builder /go/src/github.com/mattkasun/playground/playground .
 ADD /resources/* resources/
-ADD /stylesheet/* stylesheet/
-ADD /html/*gohtml html/
+ADD /stylesheet/css* stylesheet/css/
+ADD /stylesheet/webfonts/* webfonts/
+ADD /data/* data/
+ADD /html/* html/
 CMD ["./playground"]
 
