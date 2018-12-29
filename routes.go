@@ -9,6 +9,8 @@ import (
 func initializeRoutes(router *gin.Engine) {
 	//Handle main routed
 
+	router.Static("/stylesheet", "./stylesheet")
+	router.StaticFile("favicon.ico", "./resources/favicon.ico")
 	router.POST("/auth", processLogin)
 	router.GET("/logout", logout)
 	router.GET("/login", displayLogin)
