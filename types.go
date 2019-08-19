@@ -14,6 +14,7 @@ type Transaction struct {
 	Cat     string
 	Amount  int
 	Expense bool
+	Comment string
 }
 
 //Expense -- type to expense data
@@ -37,6 +38,7 @@ type PageData struct {
 	Transactions []Transaction
 	Transaction  Transaction
 	CarryOver    int
+	Comment      string
 }
 
 //EditData - contains data to edit a transaction

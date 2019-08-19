@@ -10,14 +10,15 @@
 			<input type="hidden" name="Cat" value="{{.Cat}}">
 			<input type="hidden" name="Amount" value="{{.Amount}}">
 			<input type="hidden" name="Expense" value="{{.Expense}}">
+			<input type="hidden" name="Comment" value="{{.Comment}}">
 			{{if .Expense}}
 				<button class="w3-block w3-teal w3-round-xxlarge" 
 					type="submit" >
-					{{.Date.Format "2006-01-02"}} {{.Cat}} {{.Amount}} </button>
+					{{.Date.Format "2006-01-02"}} {{.Cat}} {{.Amount}} {{.Comment}}</button>
 			{{else}}
 				<button class="w3-block w3-red w3-round-xxlarge" 
 					type="submit" >
-					{{.Date.Format "2006-01-02"}} {{.Cat}} {{.Amount}} </button>
+					{{.Date.Format "2006-01-02"}} {{.Cat}} {{.Amount}} {{.Comment}}</button>
 			{{end}}	
 		</form>  
 	{{end}}

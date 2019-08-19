@@ -102,14 +102,16 @@ func updateHandler(c *gin.Context) {
 	amount, _ := strconv.Atoi(c.PostForm("OldAmount"))
 	cat := c.PostForm("OldCat")
 	expense, _ := strconv.ParseBool(c.PostForm("OldExpense"))
-	old := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
+	comment := c.PostForm("OldComment")
+	old := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense, Comment: comment}
 	date, err = time.Parse("2006-01-02", c.PostForm("date"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	amount, _ = strconv.Atoi(c.PostForm("Amount"))
 	cat = c.PostForm("Category")
-	new := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
+	comment = c.PostForm("Comment")
+	new := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense, Comment: comment}
 	updateTrans(old, new)
 	data.init(&date, "Transaction")
 	c.HTML(http.StatusOK, "layout", data)

@@ -131,7 +131,8 @@ func commitTrans(c *gin.Context, expense bool) {
 		log.Fatal(err)
 	}
 	cat := c.PostForm("Category")
-	transaction := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
+	comment := c.PostForm("Comment")
+	transaction := Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense, Comment: comment}
 	writeOne(transaction)
 }
 
@@ -144,6 +145,7 @@ func edit(c *gin.Context) Transaction {
 		log.Fatal(err)
 	}
 	cat := c.PostForm("Cat")
-	transaction = Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense}
+	comment := c.PostForm("Comment")
+	transaction = Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense, Comment: comment}
 	return transaction
 }
