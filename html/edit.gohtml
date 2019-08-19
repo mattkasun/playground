@@ -19,6 +19,7 @@
     <input type="hidden" name="OldExpense" value='{{.Old.Expense}}'/>
     <input type="hidden" name="OldCat" value="{{.Old.Cat}}"/>
     <input type="hidden" name="OldAmount" value="{{.Old.Amount}}"/>
+    <input type="hidden" name="OldComment" value="{{.Old.Comment}}"/>
     <br>Category
     <select name="Category"> 
     {{$cat := .Old.Cat}}
@@ -42,7 +43,8 @@
     </select>
     <br>Amount
     <input name="Amount" type="number" value="{{.Old.Amount}}"/>
-    <br>
+    <br>Comment
+    <input name="Comment" type="text" value="{{.Old.Comment}}"/>
     <br>
     <input type="submit" value=Update>
     <input type="reset">
