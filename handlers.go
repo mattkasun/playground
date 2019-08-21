@@ -145,7 +145,10 @@ func addNewUser(c *gin.Context) {
 		log.Panic("unable to create user file ", err)
 	}
 	user.UserName = username
-	user.Password = password
+	user.Password, err = hashPassword(password)
+	if err != nil {
+		log.Fatal("error encoding password ", err)
+	}
 	user.ID = 1
 	user.Cookie = ""
 	user.ValidTo = time.Date(1900, 1, 1, 0, 0, 0, 0, time.Local)

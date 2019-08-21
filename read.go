@@ -112,7 +112,7 @@ func validateUser(u, p string) (bool, User) {
 			log.Println("decoding failure")
 			return false, User{}
 		}
-		if user.UserName == u && user.Password == p {
+		if user.UserName == u && checkPassword(p, user.Password) {
 			return true, user
 		}
 	}

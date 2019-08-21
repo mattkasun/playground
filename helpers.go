@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (data *PageData) init(date *time.Time, page string) {
@@ -148,4 +149,13 @@ func edit(c *gin.Context) Transaction {
 	comment := c.PostForm("Comment")
 	transaction = Transaction{Date: date, Cat: cat, Amount: amount, Expense: expense, Comment: comment}
 	return transaction
+}
+func hashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 4)
+	return string(bytes), err
+}
+
+func checkPassword(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
